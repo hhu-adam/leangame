@@ -1,0 +1,38 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "type": "module",
+  "scripts": {
+    "build:client": "npm --workspace client run build",
+    "build:server": "npm --workspace server run build",
+    "build:lean": "cd server/lean && lake build",
+    "build": "concurrently -n client,server,lean -c green,blue,yellow 'npm run build:client' 'npm run build:server' 'npm run build:lean'",
+    "fmt:check": "oxfmt --check",
+    "fmt": "oxfmt",
+    "lint": "oxlint",
+    "start:client": "npm --workspace client run dev",
+    "start:server": "npm --workspace server run dev",
+    "start": "concurrently -n client,server -c green,blue, 'npm run start:client' 'npm run start:server'",
+    "test": "concurrently -n app,cypress -c blue,green \"npm start\" \"cypress run\" -k -s first --hide app",
+    "test:ui": "concurrently -n app,cypress -c blue,green \"npm start\" \"cypress open\" -k -s first --hide app"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "cypress": "^15.21.0",
+    "oxfmt": "^0.65.0",
+    "oxlint": "^1.79.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
+  }
+}
