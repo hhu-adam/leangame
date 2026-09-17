@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
+    "build:lean": "cd lean && lake build",
+    "test:lean": "cd lean && lake test",
+    "test:build-game": "cd TestGame && lake build",
     "start": "node dist/index.js"
   },
   "dependencies": {
