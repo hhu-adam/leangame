@@ -14,6 +14,9 @@ export default defineConfig({
       '/ping': {
         target: `http://localhost:${serverPort}`,
       },
+      '/api': {
+        target: `http://localhost:${serverPort}`,
+      },
     },
   },
 })
