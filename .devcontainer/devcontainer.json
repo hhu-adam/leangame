@@ -1,0 +1,36 @@
+{
+  "name": "leangame-dev",
+
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "oxc.oxc-vscode",
+        "bradlc.vscode-tailwindcss",
+        "leanprover.lean4"
+      ]
+    }
+  },
+
+  "forwardPorts": [3000],
+
+  "remoteUser": "node",
+  "containerUser": "node",
+
+  "runArgs": [
+    "--cap-drop=ALL",
+    "--security-opt=no-new-privileges:true",
+    "--read-only",
+    "--tmpfs",
+    "/tmp:rw,exec,nosuid,size=1g"
+  ],
+
+  "postCreateCommand": "npm ci"
+}
