@@ -19,18 +19,12 @@
     }
   },
 
-  "forwardPorts": [3000],
+  "forwardPorts": [3000, 8000],
 
   "remoteUser": "node",
   "containerUser": "node",
 
-  "runArgs": [
-    "--cap-drop=ALL",
-    "--security-opt=no-new-privileges:true",
-    "--read-only",
-    "--tmpfs",
-    "/tmp:rw,exec,nosuid,size=1g"
-  ],
+  "runArgs": ["--cap-drop=ALL", "--security-opt=no-new-privileges:true"],
 
   "postCreateCommand": "npm ci"
 }

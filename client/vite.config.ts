@@ -8,6 +8,7 @@ const serverPort = process.env.PORT || 8000
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    host: true,
     port: Number(clientPort),
     proxy: {
       '/ping': {
