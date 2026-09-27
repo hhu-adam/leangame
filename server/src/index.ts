@@ -1,6 +1,5 @@
 import express from 'express'
-import { gameDataFilePath, i18nFilePath } from './gameData.js'
-import { TEST_GAME_PATH, requireGame } from './gameData.js'
+import { gameDataFilePath, i18nFilePath, requireGame } from './gameData.js'
 import {
   getAllInstances,
   getInstance,
@@ -17,16 +16,18 @@ app.get('/ping', (_req, res) => {
   res.send('pong')
 })
 
-app.post('/api/lean/start/:owner/:game', (_req, res) => {
+app.post('/api/lean/start/:owner/:game', (req, res) => {
+  const gamePath = requireGame(req.params.owner, req.params.game, res)
+  if (!gamePath) return
   try {
-    // TODO: use owner and game instead of the testgame
-    const instance = startInstance(TEST_GAME_PATH)
+    const instance = startInstance(gamePath)
     res.status(201).json({
       id: instance.id,
       status: instance.status,
       startedAt: instance.startedAt,
     })
   } catch (err) {
+    // TODO: do not expose error message, write to logs instead
     res
       .status(500)
       .json({ error: `Failed to start Lean server: ${(err as Error).message}` })

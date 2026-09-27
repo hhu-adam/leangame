@@ -26,5 +26,8 @@ dist-ssr
 # Lean
 **/.lake
 
+# Locally fetched games
+/server/games
+
 # Cypress
 cypress/screenshots
