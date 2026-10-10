@@ -1,21 +1,33 @@
 import { randomUUID } from 'node:crypto'
-import { spawn, type ChildProcess } from 'node:child_process'
-
-export type LeanInstanceStatus = 'starting' | 'running' | 'exited'
-
-export interface LeanInstance {
-  id: string
-  gamePath: string
-  process: ChildProcess
-  status: LeanInstanceStatus
-  startedAt: Date
-  exitCode: number | null
-}
+import { spawn } from 'node:child_process'
+import { createLspClient } from './lean/lspClient.js'
+import type { Diagnostic, LeanInstance } from './api.js'
 
 const instances = new Map<string, LeanInstance>()
 
 export function startInstance(gamePath: string): LeanInstance {
   const child = spawn('lake', ['serve', '--'], { cwd: gamePath })
+
+  const client = createLspClient(child)
+  const diagnostics = new Map<string, Diagnostic[]>()
+  client.onNotification(
+    'textDocument/publishDiagnostics',
+    (params: { uri: string; diagnostics: Diagnostic[] }) => {
+      diagnostics.set(params.uri, params.diagnostics)
+    },
+  )
+
+  const lspReady = client
+    .request('initialize', {
+      processId: process.pid,
+      rootUri: null,
+      capabilities: {},
+    })
+    .then(() => client.notify('initialized', {}))
+    .then(() => undefined)
+  // the real error surfaces to whoever awaits `lspReady`; this just stops
+  // Node from complaining about an unhandled rejection in the meantime
+  lspReady.catch(() => {})
 
   const instance: LeanInstance = {
     id: randomUUID(),
@@ -24,11 +36,11 @@ export function startInstance(gamePath: string): LeanInstance {
     status: 'starting',
     startedAt: new Date(),
     exitCode: null,
+    client,
+    lspReady,
+    diagnostics,
   }
 
-  // `lake serve` speaks LSP over stdio. We don't parse it yet, but we must
-  // keep draining the pipes so the child never blocks on a full OS buffer.
-  child.stdout?.on('data', () => {})
   child.stderr?.on('data', (chunk: Buffer) => {
     console.error(`[lean:${instance.id}] ${chunk.toString()}`)
   })

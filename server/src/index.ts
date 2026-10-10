@@ -1,5 +1,6 @@
 import express from 'express'
 import { gameDataFilePath, i18nFilePath, requireGame } from './gameData.js'
+import { checkProof } from './lean/proofCheck.js'
 import {
   getAllInstances,
   getInstance,
@@ -8,9 +9,11 @@ import {
 } from './leanInstances.js'
 import path from 'path'
 import { sendJsonFile } from './utils/response.js'
+import { ApiProofCheck } from './api.js'
 
 const PORT = process.env.PORT || 8000
 const app = express()
+app.use(express.json())
 
 app.get('/ping', (_req, res) => {
   res.send('pong')
@@ -69,6 +72,25 @@ app.delete('/api/lean/instances/:id', (req, res) => {
   }
   const instance = getInstance(req.params.id)!
   res.json({ id: instance.id, status: instance.status })
+})
+
+app.post('/api/lean/instances/:id/check', async (req, res) => {
+  const input: ApiProofCheck = req.body
+  // TODO: validate input
+  const instance = getInstance(req.params.id)
+  if (!instance) {
+    res.status(404).json({ error: 'Instance not found' })
+    return
+  }
+  try {
+    const result = await checkProof({ ...input, instance })
+    res.json(result)
+  } catch (err) {
+    // TODO: do not expose error message, write to logs instead
+    res
+      .status(500)
+      .json({ error: `Failed to check proof: ${(err as Error).message}` })
+  }
 })
 
 app.get('/api/data/:owner/:game/game', (req, res) => {

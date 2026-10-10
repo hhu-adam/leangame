@@ -18,7 +18,8 @@
     "start:client": "npm --workspace client run dev",
     "start:server": "npm --workspace server run dev",
     "start": "concurrently -n client,server -c green,blue, 'npm run start:client' 'npm run start:server'",
-    "test": "npm run test:lean && npm run test:build-game && concurrently -n app,cypress,lean -c blue,green \"npm start\" \"cypress run\" -k -s first --hide app",
+    "test": "npm run test:lean && npm run test:client",
+    "test:client": "npm run test:build-game && concurrently -n app,cypress,lean -c blue,green \"npm start\" \"cypress run\" -k -s first --hide app",
     "test:lean": "npm --workspace server run test:lean",
     "test:build-game": "npm --workspace server run test:build-game",
     "test:ui": "concurrently -n app,cypress -c blue,green \"npm start\" \"cypress open\" -k -s first --hide app"
@@ -30,7 +31,7 @@
   "devDependencies": {
     "concurrently": "^10.0.5",
     "cypress": "^15.21.0",
-    "oxfmt": "^0.65.0",
+    "oxfmt": "^0.72.0",
     "oxlint": "^1.79.0"
   },
   "allowScripts": {
