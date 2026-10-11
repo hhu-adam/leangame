@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process'
 import { createLspClient } from './lspClient.js'
-import type { Diagnostic, LeanInstance } from '../api.js'
+import type { LeanInstance } from '../api.js'
 import path from 'node:path'
 
 const instances = new Map<string, LeanInstance>()
@@ -32,13 +32,6 @@ export function startInstance(
   }
 
   const client = createLspClient(child)
-  const diagnostics = new Map<string, Diagnostic[]>()
-  client.onNotification(
-    'textDocument/publishDiagnostics',
-    (params: { uri: string; diagnostics: Diagnostic[] }) => {
-      diagnostics.set(params.uri, params.diagnostics)
-    },
-  )
 
   const handshake = client
     .request('initialize', {
@@ -69,7 +62,6 @@ export function startInstance(
     exitCode: null,
     client,
     lspReady,
-    diagnostics,
   }
 
   child.stderr?.on('data', (chunk: Buffer) => {

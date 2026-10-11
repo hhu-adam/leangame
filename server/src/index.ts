@@ -9,7 +9,7 @@ import {
 } from './lean/leanInstances.js'
 import path from 'path'
 import { sendJsonFile } from './utils/response.js'
-import { ApiProofCheck } from './api.js'
+import { ApiProofCheckInput } from './api.js'
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -77,7 +77,7 @@ app.delete('/api/lean/instances/:id', (req, res) => {
 })
 
 app.post('/api/lean/instances/:id/check', async (req, res) => {
-  const input: ApiProofCheck = req.body
+  const input: ApiProofCheckInput = req.body
   // TODO: validate input
   const instance = getInstance(req.params.id)
   if (!instance) {

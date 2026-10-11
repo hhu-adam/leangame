@@ -7,6 +7,9 @@ open Lean Elab Command
 
 /-- Copied from `Mathlib.Tactic.HelpCmd`.
 
+TODO: the original source is now in Batteries: see `licenses/LICENSE_BATTERIES_APACHE`
+and `licenses/LICENSE_MATHLIB4_APACHE`
+
 Gets the initial string token in a parser description. For example, for a declaration like
 `syntax "bla" "baz" term : tactic`, it returns `some "bla"`. Returns `none` for syntax declarations
 that don't start with a string constant. -/
@@ -27,7 +30,11 @@ partial def getHeadTk (e : Expr) : Option String :=
 
 /-! ## Doc entries -/
 
-/-- Modified from `#help` in `Mathlib.Tactic.HelpCmd` -/
+/-- Modified from `#help` in `Mathlib.Tactic.HelpCmd`
+
+TODO: the original source is now in Batteries: see `licenses/LICENSE_BATTERIES_APACHE`
+and `licenses/LICENSE_MATHLIB4_APACHE`
+-/
 def getTacticDocstring (env : Environment) (name: Name) : CommandElabM (Option String) := do
   let name := name.toString (escape := false)
   let mut decls : Lean.RBMap String (Array SyntaxNodeKind) compare := {}

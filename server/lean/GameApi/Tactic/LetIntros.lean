@@ -29,6 +29,9 @@ def letFun? (e : Expr) : Option (Name × Expr × Expr × Expr) :=
 
 /--
 Copied from `Lean.Meta.getIntrosSize`.
+
+TODO: these have been deprecated in https://github.com/leanprover/lean4,
+see file `licenses/LICENSE_LEAN4_APACHE`
 -/
 private partial def getLetIntrosSize : Expr → Nat
   -- | .forallE _ _ b _ => getLetIntrosSize b + 1
@@ -42,6 +45,9 @@ private partial def getLetIntrosSize : Expr → Nat
 
 /--
 Copied and from `Lean.MVarId.intros`.
+
+TODO: these have been deprecated in https://github.com/leanprover/lean4,
+see file `licenses/LICENSE_LEAN4_APACHE`
 -/
 def _root_.Lean.MVarId.letIntros (mvarId : MVarId) : MetaM (Array FVarId × MVarId) := do
   let type ← mvarId.getType

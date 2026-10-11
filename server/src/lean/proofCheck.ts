@@ -3,13 +3,13 @@ import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { gameDataFilePath } from '../gameData.js'
 import { existsSync } from 'node:fs'
-import type { ApiProofCheck, LeanInstance } from '../api.js'
+import type {
+  ApiProofCheckInput,
+  ApiProofCheckResult,
+  LeanInstance,
+} from '../api.js'
 
-interface CheckResult {
-  completed: boolean
-}
-
-interface ProofCheck extends ApiProofCheck {
+interface ProofCheck extends ApiProofCheckInput {
   instance: LeanInstance
 }
 
@@ -32,7 +32,7 @@ async function readJson<T>(filePath: string): Promise<T> {
   return JSON.parse(content) as T
 }
 
-export function checkProof(input: ProofCheck): Promise<CheckResult> {
+export function checkProof(input: ProofCheck): Promise<ApiProofCheckResult> {
   const key = `${input.instance.id}:${input.world}:${input.level}`
   return withQueue(key, () => runCheck(input))
 }
@@ -44,7 +44,7 @@ async function runCheck({
   level,
   tactics,
   world,
-}: ProofCheck): Promise<CheckResult> {
+}: ProofCheck): Promise<ApiProofCheckResult> {
   await instance.lspReady
 
   const levelDataPath = gameDataFilePath(
@@ -71,13 +71,16 @@ async function runCheck({
 
   const tacticBlock = tactics.map((tactic) => '  ' + tactic).join('\n')
   const inventoryFormatted = '[' + inventory.join('\n') + ']'
-  const content =
+  const header =
     'import GameServer\n' +
     `${originalContent}\n\n` +
     `Runner "${gameData.name}" "${world}" ${level} ` +
     `(difficulty := ${difficulty}) ` +
     `(inventory := ${inventoryFormatted}) ` +
-    `:= by\n${tacticBlock}\n`
+    `:= by\n`
+  const content = `${header}${tacticBlock}\n`
+  // 0-based line of the first tactic
+  const proofStartLine = header.split('\n').length - 1
 
   const uri = pathToFileURL(
     path.posix.join(instance.gamePathBwrap, modulePath),
@@ -94,17 +97,28 @@ async function runCheck({
       version,
     })
 
-    const diagnostics = instance.diagnostics.get(uri) ?? []
-    // `sorry` only produces a warning (severity 2), not an error, but it must
-    // never count as a completed proof
-    const completed = !diagnostics.some(
-      (d) => d.severity === 1 || d.message.includes('sorry'),
+    const position = { line: proofStartLine, character: 0 }
+    const { sessionId } = await instance.client.request<{
+      sessionId: number | string
+    }>('$/lean/rpc/connect', { uri })
+    return await instance.client.request<ApiProofCheckResult>(
+      '$/lean/rpc/call',
+      {
+        textDocument: { uri },
+        position,
+        sessionId,
+        method: 'Game.checkProof',
+        params: {
+          gameId: gameData.name,
+          worldId: world,
+          levelId: level,
+          proofStartLine,
+        },
+      },
     )
-    return { completed }
   } finally {
     await instance.client.notify('textDocument/didClose', {
       textDocument: { uri },
     })
-    instance.diagnostics.delete(uri)
   }
 }

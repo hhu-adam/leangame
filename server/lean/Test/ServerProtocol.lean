@@ -1,8 +1,9 @@
 /-
-copied from https://github.com/leanprover/lean4, under the following license:
+copied without modifications from https://github.com/leanprover/lean4,
+under the following license:
 
 Copyright (c) 2025 Lean FRO. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
+Released under Apache 2.0 license as described in the file `licenses/LICENSE_LEAN4_APACHE`.
 
 Author: Marc Huisinga
 -/

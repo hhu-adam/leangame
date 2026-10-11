@@ -1,4 +1,21 @@
-import GameServer.Structures
+/-
+copied from https://github.com/leanprover/lean4, under the following license:
+
+Copyright (c) 2021 Microsoft Corporation. All rights reserved.
+Released under Apache 2.0 license as described in the file `licenses/LICENSE_LEAN4_APACHE`.
+
+Authors: Wojciech Nawrocki
+
+---
+
+Modifications fall under the license of this project,
+described in `LICENSE`, unless if they are upstreamed
+to the original source, in which case they can be
+incorporated under the original license, as described
+under `licenses/LICENSE_LEAN4_APACHE`.
+-/
+
+import GameServer.Lean.Structures
 
 /-!
 This file is a modified copy of `Lean.Widget.InteractiveGoal`.
