@@ -129,13 +129,13 @@ elab "NewHiddenTactic" args:ident* : command => do
 
 /-- Declare theorems that are introduced by this level. -/
 elab "NewTheorem" args:ident* : command => do
-  checkCommandNotDuplicated ((←getCurLevel).lemmas.new) "NewTheorem"
+  checkCommandNotDuplicated ((←getCurLevel).theorems.new) "NewTheorem"
   for name in args do
     try let _decl ← getConstInfo name.getId catch
       | _ => logErrorAt name m!"unknown identifier '{name}'."
     checkInventoryDoc .Theorem name -- TODO: Add (template := "[mathlib]")
   modifyCurLevel fun level => pure {level with
-    lemmas := {level.lemmas with new := args.map (·.getId)}}
+    theorems := {level.theorems with new := args.map (·.getId)}}
 
 /-- Declare definitions that are introduced by this level. -/
 elab "NewDefinition" args:ident* : command => do
@@ -155,10 +155,10 @@ elab "DisabledTactic" args:ident* : command => do
 /-- Declare theorems that are temporarily disabled in this level.
 This is ignored if `OnlyTheorem` is set. -/
 elab "DisabledTheorem" args:ident* : command => do
-  checkCommandNotDuplicated ((←getCurLevel).lemmas.disabled) "DisabledTheorem"
+  checkCommandNotDuplicated ((←getCurLevel).theorems.disabled) "DisabledTheorem"
   for name in args do checkInventoryDoc .Theorem name
   modifyCurLevel fun level => pure {level with
-    lemmas := {level.lemmas with disabled := args.map (·.getId)}}
+    theorems := {level.theorems with disabled := args.map (·.getId)}}
 
 /-- Declare definitions that are temporarily disabled in this level -/
 elab "DisabledDefinition" args:ident* : command => do
@@ -176,10 +176,10 @@ elab "OnlyTactic" args:ident* : command => do
 
 /-- Temporarily disable all theorems except the ones declared here -/
 elab "OnlyTheorem" args:ident* : command => do
-  checkCommandNotDuplicated ((←getCurLevel).lemmas.only) "OnlyTheorem"
+  checkCommandNotDuplicated ((←getCurLevel).theorems.only) "OnlyTheorem"
   for name in args do checkInventoryDoc .Theorem name
   modifyCurLevel fun level => pure {level with
-    lemmas := {level.lemmas with only := args.map (·.getId)}}
+    theorems := {level.theorems with only := args.map (·.getId)}}
 
 /-- Temporarily disable all definitions except the ones declared here.
 This is ignored if `OnlyDefinition` is set. -/
@@ -189,7 +189,7 @@ elab "OnlyDefinition" args:ident* : command => do
   modifyCurLevel fun level => pure {level with
     definitions := {level.definitions with only := args.map (·.getId)}}
 
-/-- Define which tab of Lemmas is opened by default. Usage: `TheoremTab "Nat"`.
+/-- Define which tab of Theorems is opened by default. Usage: `TheoremTab "Nat"`.
 If omitted, the current tab will remain open. -/
 elab "TheoremTab"  category:str : command =>
-  modifyCurLevel fun level => pure {level with lemmaTab := category.getString}
+  modifyCurLevel fun level => pure {level with theoremTab := category.getString}

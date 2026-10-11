@@ -17,8 +17,8 @@ def Parser.dependency := Parser.sepBy1Indent Parser.ident "→"
 /-- Manually add a dependency between two worlds.
 
 Normally, the dependencies are computed automatically by the
-tactics & lemmas used in the example
-proof and the ones introduced by `NewLemma`/`NewTactic`.
+tactics & theorems used in the example
+proof and the ones introduced by `NewTheorem`/`NewTactic`.
 Use the command `Dependency World₁ → World₂` to add a manual edge to the graph,
 for example if the only dependency between the worlds is given by
 the narrative. -/
@@ -69,7 +69,7 @@ elab "MakeGame" : command => do
     | .Theorem =>
       modifyEnv (inventoryExt.addEntry · { item with
         content := content
-        -- Add the lemma statement to the doc
+        -- Add the theorem statement to the doc
         statement := (← getStatementString name)
       })
     | _ =>
@@ -100,7 +100,7 @@ elab "MakeGame" : command => do
         newItems := newItems.insertMany (level.getInventory inventoryType).new
         hiddenItems := hiddenItems.insertMany (level.getInventory inventoryType).hidden
 
-        -- if the previous level was named, we need to add it as a new lemma
+        -- if the previous level was named, we need to add it as a new theorem
         if inventoryType == .Theorem then
           match levelId with
           | 0 => pure ()
@@ -116,7 +116,7 @@ elab "MakeGame" : command => do
 
           if inventoryType == .Theorem then
 
-      -- if the last level was named, we need to add it as a new lemma
+      -- if the last level was named, we need to add it as a new theorem
       let i₀ := world.levels.size
 
         let some idx := world.levels.get? (i₀) | throwError s!"Level {i₀} not found for world {worldId}!"
@@ -224,24 +224,24 @@ elab "MakeGame" : command => do
   for inventoryType in #[.Tactic, .Definition, .Theorem] do
 
     -- Which items are introduced in which world?
-    let mut lemmaStatements : HashMap (Name × Nat) Name := {}
+    let mut theoremStatements : HashMap (Name × Nat) Name := {}
     -- TODO: I believe `newItemsInWorld` has way to many elements in it which we iterate over
-    -- e.g. we iterate over `ring` for `Lemma`s as well, but so far that seems to cause no problems
+    -- e.g. we iterate over `ring` for `Theorem`s as well, but so far that seems to cause no problems
     let mut allItems : HashSet Name := {}
     for (worldId, world) in game.worlds.nodes.toArray do
       let mut newItems : HashSet Name := {}
       for (levelId, level) in world.levels.toArray do
-        let newLemmas := (level.getInventory inventoryType).new
-        newItems := newItems.insertMany newLemmas
-        allItems := allItems.insertMany newLemmas
+        let newTheorems := (level.getInventory inventoryType).new
+        newItems := newItems.insertMany newTheorems
+        allItems := allItems.insertMany newTheorems
         if inventoryType == .Theorem then
           -- For levels `2, 3, …` we check if the previous level was named
-          -- in which case we add it as available lemma.
+          -- in which case we add it as available theorem.
           match levelId with
           | 0 => pure ()
           | 1 => pure () -- level ids start with 1, so we need to skip 1, too.
           | i₀ + 1 =>
-            -- add named statement from previous level to the available lemmas.
+            -- add named statement from previous level to the available theorems.
             let some idx := world.levels.get? (i₀) | throwError s!"Level {i₀ + 1} not found for world {worldId}!"
             match (idx).statementName with
             | .anonymous => pure ()
@@ -250,9 +250,9 @@ elab "MakeGame" : command => do
               let name := Name.str pre s
               newItems := newItems.insert name
               allItems := allItems.insert name
-              lemmaStatements := lemmaStatements.insert (worldId, levelId) name
+              theoremStatements := theoremStatements.insert (worldId, levelId) name
       if inventoryType == .Theorem then
-        -- if named, add the lemma from the last level of the world to the inventory
+        -- if named, add the theorem from the last level of the world to the inventory
         let i₀ := world.levels.size
         match i₀ with
         | 0 => logWarning m!"World `{worldId}` contains no levels."
@@ -276,7 +276,7 @@ elab "MakeGame" : command => do
             -- drop hidden items
             return none
           | false, none =>
-            -- Note: we did have a panic here before because lemma statement and doc entry
+            -- Note: we did have a panic here before because theorem statement and doc entry
             -- had mismatching namespaces
             logError m!"There is no inventory item ({inventoryType}) for: {item}."
             panic s!"Inventory item {item} not found!"
@@ -333,7 +333,7 @@ elab "MakeGame" : command => do
         -- add the exercise statement from the previous level
         -- if it was named
         if inventoryType == .Theorem then
-          match lemmaStatements.get? (worldId, levelId) with
+          match theoremStatements.get? (worldId, levelId) with
           | none => pure ()
           | some name =>
             let some data ← getInventoryItem? name inventoryType
@@ -349,7 +349,7 @@ elab "MakeGame" : command => do
               altTitle := data.statement
               locked := false }
 
-        -- add marks for `disabled` and `new` lemmas here, so that they only apply to
+        -- add marks for `disabled` and `new` theorems here, so that they only apply to
         -- the current level.
         let itemsArray := items.toArray
           |>.insertionSort (fun a b => a.1.toString < b.1.toString)
@@ -375,10 +375,10 @@ elab "MakeGame" : command => do
         return none
       | some item => return some item.toTile)
   let inventory : InventoryOverview := {
-    lemmas := (← getTiles .Theorem).map (fun tile => {tile with hidden := hiddenItems.contains tile.name})
+    theorems := (← getTiles .Theorem).map (fun tile => {tile with hidden := hiddenItems.contains tile.name})
     tactics := (← getTiles .Tactic).map (fun tile => {tile with hidden := hiddenItems.contains tile.name})
     definitions := (← getTiles .Definition).map (fun tile => {tile with hidden := hiddenItems.contains tile.name})
-    lemmaTab := none
+    theoremTab := none
   }
 
   saveGameData allItemsByType inventory

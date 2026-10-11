@@ -79,7 +79,9 @@ async function runCheck({
     `(inventory := ${inventoryFormatted}) ` +
     `:= by\n${tacticBlock}\n`
 
-  const uri = pathToFileURL(sourcePath).toString()
+  const uri = pathToFileURL(
+    path.posix.join(instance.gamePathBwrap, modulePath),
+  ).toString()
   const version = 1
 
   await instance.client.notify('textDocument/didOpen', {

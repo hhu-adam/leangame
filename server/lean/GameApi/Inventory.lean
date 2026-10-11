@@ -135,7 +135,7 @@ partial def collectUsedInventory (stx : Syntax) (acc : UsedInventory := {}) : Co
         catch | _ => pure [] -- catch "unknown constant" error
       return ← ns.foldlM (fun acc n => do
         if let some (.thmInfo ..) := (← getEnv).find? n then
-          return {acc with lemmas := acc.lemmas.insertMany ns}
+          return {acc with theorems := acc.theorems.insertMany ns}
         else
           return {acc with definitions := acc.definitions.insertMany ns}
       ) acc
@@ -145,10 +145,10 @@ partial def collectUsedInventory (stx : Syntax) (acc : UsedInventory := {}) : Co
 def GameLevel.getInventory (level : GameLevel) : InventoryType → InventoryInfo
 | .Tactic => level.tactics
 | .Definition => level.definitions
-| .Theorem => level.lemmas
+| .Theorem => level.theorems
 
 def GameLevel.setComputedInventory (level : GameLevel) :
     InventoryType → Array InventoryTile → GameLevel
 | .Tactic, v =>     {level with tactics     := {level.tactics     with tiles := v}}
 | .Definition, v => {level with definitions := {level.definitions with tiles := v}}
-| .Theorem, v =>      {level with lemmas      := {level.lemmas      with tiles := v}}
+| .Theorem, v =>      {level with theorems      := {level.theorems      with tiles := v}}

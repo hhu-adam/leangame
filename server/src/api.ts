@@ -13,6 +13,8 @@ export interface ApiProofCheck {
 export interface LeanInstance {
   id: string
   gamePath: string
+  /** where the `gamePath` is mounted inside the bubblewrap containter. */
+  gamePathBwrap: string
   process: ChildProcessWithoutNullStreams
   status: LeanInstanceStatus
   startedAt: Date

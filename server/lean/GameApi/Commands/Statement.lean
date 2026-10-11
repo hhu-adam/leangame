@@ -53,7 +53,7 @@ elab doc:docComment ? attrs:Parser.Term.attributes ?
   let defaultDeclName : Ident := mkIdent <| (← getCurGame).name ++ (← getCurWorld).name ++
     ("level" ++ toString lvlIdx : String)
 
-  -- Collect all used tactics/lemmas in the sample proof:
+  -- Collect all used tactics/theorems in the sample proof:
   let usedInventory ← match val with
   | `(Parser.Command.declVal| := $proof:term) => do
     collectUsedInventory proof
@@ -126,5 +126,5 @@ elab doc:docComment ? attrs:Parser.Term.attributes ?
     descrFormat := descrFormat
     tactics := {level.tactics with used := usedInventory.tactics.toArray}
     definitions := {level.definitions with used := usedInventory.definitions.toArray}
-    lemmas := {level.lemmas with used := usedInventory.lemmas.toArray}
+    theorems := {level.theorems with used := usedInventory.theorems.toArray}
     }

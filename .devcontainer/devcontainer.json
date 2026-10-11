@@ -21,10 +21,14 @@
 
   "forwardPorts": [3000, 8000],
 
+  "containerEnv": {
+    "BWRAP_BIND_PROC": "true"
+  },
+
   "remoteUser": "node",
   "containerUser": "node",
 
   "runArgs": ["--cap-drop=ALL", "--security-opt=no-new-privileges:true"],
 
-  "postCreateCommand": "npm ci"
+  "postCreateCommand": "npm ci && npx cypress install"
 }

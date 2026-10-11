@@ -6,7 +6,7 @@ import {
   getInstance,
   startInstance,
   stopInstance,
-} from './leanInstances.js'
+} from './lean/leanInstances.js'
 import path from 'path'
 import { sendJsonFile } from './utils/response.js'
 import { ApiProofCheck } from './api.js'
@@ -20,10 +20,12 @@ app.get('/ping', (_req, res) => {
 })
 
 app.post('/api/lean/start/:owner/:game', (req, res) => {
-  const gamePath = requireGame(req.params.owner, req.params.game, res)
+  const game = req.params.game
+  const owner = req.params.owner
+  const gamePath = requireGame(owner, game, res)
   if (!gamePath) return
   try {
-    const instance = startInstance(gamePath)
+    const instance = startInstance(gamePath, game.toLowerCase() === 'testgame')
     res.status(201).json({
       id: instance.id,
       status: instance.status,

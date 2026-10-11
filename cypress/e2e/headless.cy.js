@@ -68,3 +68,34 @@ describe('Server communication', () => {
       })
   })
 })
+
+describe('Data', () => {
+  it('can get game info', () => {
+    cy.request('GET', '/api/data/test/testgame/game')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.title).to.eq('Test Game')
+        expect(data.worlds.nodes).to.have.property('TestWorld')
+        expect(data.settings.unbundleHyps).to.eq(false)
+        // TODO: other fields
+      })
+  })
+  it('can get inventory', () => {
+    cy.request('GET', '/api/data/test/testgame/inventory')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.definitions).not.to.eq(null)
+        expect(data.definitions.length).not.to.eq(0)
+        expect(data.tactics).not.to.eq(null)
+        expect(data.tactics.length).not.to.eq(0)
+        expect(data.theorems).not.to.eq(null)
+        expect(data.theorems.length).not.to.eq(0)
+      })
+  })
+})
