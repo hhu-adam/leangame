@@ -98,4 +98,35 @@ describe('Data', () => {
         expect(data.theorems.length).not.to.eq(0)
       })
   })
+  it('can get level info', () => {
+    cy.request('GET', '/api/data/test/testgame/level/TestWorld/1')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.title).to.eq('Test Level')
+      })
+  })
+  it('can get doc item', () => {
+    cy.request('GET', '/api/data/test/testgame/doc/theorem/Nat.add_comm')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.name).to.eq('Nat.add_comm')
+        expect(data.displayName).to.eq('add_comm')
+      })
+  })
+  it('can get German language', () => {
+    cy.request('GET', '/api/i18n/test/testgame/de')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data['Test Level']).to.eq('Testlevel auf Deutsch')
+      })
+  })
 })

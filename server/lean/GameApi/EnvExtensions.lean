@@ -53,9 +53,9 @@ deriving ToJson, FromJson, Repr, BEq, Hashable, Inhabited
 
 -- TODO: golf this?
 instance : ToString InventoryType := ⟨fun t => match t with
-| .Tactic => "Tactic"
-| .Theorem => "Theorem"
-| .Definition => "Definition"⟩
+| .Tactic => "tactic"
+| .Theorem => "theorem"
+| .Definition => "definition"⟩
 
 /-- The keys/templates of the inventory items, stored in `InventoryTemplateExt`. -/
 structure InventoryTemplate where

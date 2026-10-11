@@ -19,7 +19,7 @@
     "start:server": "npm --workspace server run dev",
     "start": "concurrently -n client,server -c green,blue, 'npm run start:client' 'npm run start:server'",
     "test": "npm run test:lean && npm run test:client",
-    "test:client": "npm run test:build-game && concurrently -n app,cypress,lean -c blue,green \"npm start\" \"cypress run\" -k -s first --hide app",
+    "test:client": "npm run test:build-game && concurrently -n app,cypress -c blue,green \"npm start\" \"cypress run\" -k -s first --hide app",
     "test:lean": "npm --workspace server run test:lean",
     "test:build-game": "npm --workspace server run test:build-game",
     "test:ui": "concurrently -n app,cypress -c blue,green \"npm start\" \"cypress open\" -k -s first --hide app"
