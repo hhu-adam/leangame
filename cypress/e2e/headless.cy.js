@@ -145,6 +145,79 @@ describe('Server communication', () => {
       expect(warning.message).to.contain('sorry')
     })
   })
+  it('does not keep diagnostics from a previous check', () => {
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: ['rw [g]', 'rw [g]'],
+      inventory: [],
+      difficulty: 0,
+    }).then(({ completed }) => expect(completed).to.eq(false))
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: ['rw [g]', 'rw [h]'],
+      inventory: [],
+      difficulty: 0,
+    }).then(({ completed, steps }) => {
+      expect(completed).to.eq(true)
+      for (const step of steps) {
+        expect(step.diagnostics).to.have.length(0)
+      }
+    })
+  })
+  it('can check a shorter proof after a longer one', () => {
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: ['rw [g]', 'rw [h]'],
+      inventory: [],
+      difficulty: 0,
+    }).then(({ steps }) => expect(steps).to.have.length(3))
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: [],
+      inventory: [],
+      difficulty: 0,
+    }).then(({ completed, steps }) => {
+      expect(completed).to.eq(false)
+      expect(steps).to.have.length(1)
+      expect(steps[0].diagnostics.some((d) => d.severity === 1)).to.eq(true)
+    })
+  })
+  it('returns the same result when checking the same proof twice', () => {
+    const input = {
+      world: 'TestWorld',
+      level: 1,
+      tactics: ['rw [g]'],
+      inventory: [],
+      difficulty: 0,
+    }
+    checkProof(input).then((first) => {
+      checkProof(input).then((second) => {
+        expect(second).to.deep.eq(first)
+      })
+    })
+  })
+  it('can switch between levels', () => {
+    const level1 = {
+      world: 'TestWorld',
+      level: 1,
+      tactics: ['rw [g]', 'rw [h]'],
+      inventory: [],
+      difficulty: 0,
+    }
+    checkProof(level1).then(({ completed }) => expect(completed).to.eq(true))
+    checkProof({
+      world: 'TestWorld',
+      level: 2,
+      tactics: ['rw [h]'],
+      inventory: [],
+      difficulty: 0,
+    }).then(({ completed }) => expect(completed).to.eq(true))
+    checkProof(level1).then(({ completed }) => expect(completed).to.eq(true))
+  })
 })
 
 describe('Data', () => {

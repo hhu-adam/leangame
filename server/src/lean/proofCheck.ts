@@ -8,23 +8,11 @@ import type {
   ApiProofCheckResult,
   LeanInstance,
 } from '../api.js'
+import { closeDoc, syncDoc, withQueue } from './openDocuments.js'
 
+/** Extend the API-input with the Lean instance */
 interface ProofCheck extends ApiProofCheckInput {
   instance: LeanInstance
-}
-
-// serialises checks against the same (instance, world, level) so a single
-// user's own overlapping requests can't race on the same open document
-const queues = new Map<string, Promise<unknown>>()
-
-function withQueue<T>(key: string, task: () => Promise<T>): Promise<T> {
-  const prev = queues.get(key) ?? Promise.resolve()
-  const next = prev.then(task, task)
-  queues.set(
-    key,
-    next.catch(() => {}),
-  )
-  return next
 }
 
 async function readJson<T>(filePath: string): Promise<T> {
@@ -33,11 +21,10 @@ async function readJson<T>(filePath: string): Promise<T> {
 }
 
 export function checkProof(input: ProofCheck): Promise<ApiProofCheckResult> {
-  const key = `${input.instance.id}:${input.world}:${input.level}`
-  return withQueue(key, () => runCheck(input))
+  return withQueue(input.instance.id, () => checkProofAux(input))
 }
 
-async function runCheck({
+async function checkProofAux({
   difficulty,
   instance,
   inventory,
@@ -85,13 +72,9 @@ async function runCheck({
   const uri = pathToFileURL(
     path.posix.join(instance.gamePathBwrap, modulePath),
   ).toString()
-  const version = 1
-
-  await instance.client.notify('textDocument/didOpen', {
-    textDocument: { uri, languageId: 'lean4', version, text: content },
-  })
 
   try {
+    const { version } = await syncDoc(instance, uri, content)
     await instance.client.request('textDocument/waitForDiagnostics', {
       uri,
       version,
@@ -116,9 +99,9 @@ async function runCheck({
         },
       },
     )
-  } finally {
-    await instance.client.notify('textDocument/didClose', {
-      textDocument: { uri },
-    })
+  } catch (err) {
+    // start over with a fresh file worker on the next check
+    await closeDoc(instance, uri)
+    throw err
   }
 }

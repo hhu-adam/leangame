@@ -3,6 +3,7 @@ import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process'
 import { createLspClient } from './lspClient.js'
 import type { LeanInstance } from '../api.js'
 import path from 'node:path'
+import { forgetInstanceDocs } from './openDocuments.js'
 
 const instances = new Map<string, LeanInstance>()
 
@@ -75,6 +76,7 @@ export function startInstance(
   child.once('exit', (code) => {
     instance.status = 'exited'
     instance.exitCode = code
+    forgetInstanceDocs(instance.id)
   })
 
   child.once('error', (err) => {
