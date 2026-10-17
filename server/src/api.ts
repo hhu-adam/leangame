@@ -8,6 +8,8 @@ export interface ApiProofCheckInput {
   difficulty: number
   inventory: string[]
   tactics: string[]
+  /** include hover information for goals and hypotheses */
+  hovers?: boolean
 }
 
 /** API result of a proof validation */
@@ -18,6 +20,23 @@ export interface ApiProofCheckResult {
   completed: boolean
   /** no errors, but warnings present */
   completedWithWarnings: boolean
+  hovers: ApiHover[]
+  /** Lean docstrings referenced by `hovers` */
+  hoverDocs: string[]
+}
+
+export type ApiCode =
+  | { text: string }
+  | { append: ApiCode[] }
+  | { tag: [number, ApiCode] }
+
+export interface ApiHover {
+  /** type of the subexpression */
+  type?: string
+  /** the subexpression with implicit arguments */
+  expr?: string
+  /** index in `hoverDocs` */
+  doc?: number
 }
 
 export interface ApiProofStep {
@@ -33,6 +52,8 @@ export interface ApiGoal {
   hyps: ApiHypothesis[]
   type: string
   hints: ApiHint[]
+  /** `type` with hover information */
+  typeWithHover?: ApiCode
 }
 
 export interface ApiHypothesis {
@@ -42,6 +63,10 @@ export interface ApiHypothesis {
   value?: string
   /** the hypothesis is of type `Prop` */
   isAssumption: boolean
+  /** `type` with hover information */
+  typeWithHover?: ApiCode
+  /** `value` with hover information */
+  valueWithHover?: ApiCode
 }
 
 export interface ApiHint {

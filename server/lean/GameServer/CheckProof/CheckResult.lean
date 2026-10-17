@@ -1,5 +1,6 @@
 import Lean
 import GameServer.Lean.Structures
+import GameServer.CheckProof.Hovers
 
 open Lean Widget
 
@@ -12,6 +13,10 @@ structure CheckHypothesis where
   value : Option String
   /-- the hypothesis is of type `Prop` -/
   isAssumption : Bool
+  /-- `type` with hover information, only if requested -/
+  typeWithHover : Option CodeWithHover := none
+  /-- `value` with hover information, only if requested -/
+  valueWithHover : Option CodeWithHover := none
   deriving FromJson, ToJson
 
 structure CheckGoal where
@@ -19,6 +24,8 @@ structure CheckGoal where
   hyps : Array CheckHypothesis
   type : String
   hints : Array GameHint
+  /-- `type` with hover information, only if requested -/
+  typeWithHover : Option CodeWithHover := none
   deriving FromJson, ToJson
 
 def CheckGoal.ofInteractive (goal : InteractiveGoal) (hints : Array GameHint) : CheckGoal where
@@ -30,6 +37,16 @@ def CheckGoal.ofInteractive (goal : InteractiveGoal) (hints : Array GameHint) : 
     type := hyp.type.stripTags
     value := hyp.val?.map (·.stripTags)
     isAssumption := hyp.isAssumption?.getD false }
+
+/-- Like `CheckGoal.ofInteractive`, but also adds the hover information to the table. -/
+def CheckGoal.ofInteractiveWithHovers (goal : InteractiveGoal) (hints : Array GameHint) :
+    HoverM CheckGoal := do
+  let base := CheckGoal.ofInteractive goal hints
+  let hyps ← (base.hyps.zip goal.hyps).mapM fun (hyp, iHyp) => do
+    return { hyp with
+      typeWithHover := some (← encodeWithHover iHyp.type)
+      valueWithHover := ← iHyp.val?.mapM encodeWithHover }
+  return { base with hyps, typeWithHover := some (← encodeWithHover goal.type) }
 
 structure CheckDiagnostic where
   /-- 1: error, 2: warning, 3: information, 4: hint -/
@@ -66,4 +83,8 @@ structure CheckResult where
   completed : Bool
   /-- No errors, but there may be warnings. -/
   completedWithWarnings : Bool
+  /-- Popups referenced by the `typeWithHover`/`valueWithHover` fields. Empty unless requested. -/
+  hovers : Array Hover := #[]
+  /-- Docstrings referenced by `hovers`. -/
+  hoverDocs : Array String := #[]
   deriving FromJson, ToJson

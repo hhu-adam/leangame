@@ -9,6 +9,13 @@ const uuidRegex =
 /** Lean instance shared by all tests in `Server communication`. */
 let instanceId
 
+/** The plain text of tagged code. */
+function flatten(code) {
+  if ('text' in code) return code.text
+  if ('append' in code) return code.append.map(flatten).join('')
+  return flatten(code.tag[1])
+}
+
 /** Checks a proof on the shared Lean instance. */
 function checkProof(input) {
   return cy
@@ -217,6 +224,89 @@ describe('Server communication', () => {
       difficulty: 0,
     }).then(({ completed }) => expect(completed).to.eq(true))
     checkProof(level1).then(({ completed }) => expect(completed).to.eq(true))
+  })
+  it('returns no hover information unless requested', () => {
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: [],
+      inventory: [],
+      difficulty: 0,
+    }).then(({ steps, hovers, hoverDocs }) => {
+      expect(hovers).to.have.length(0)
+      expect(hoverDocs).to.have.length(0)
+      const goal = steps[0].goals[0]
+      expect(goal.typeWithHover).to.eq(null)
+      expect(goal.hyps[0].typeWithHover).to.eq(null)
+    })
+  })
+  it('returns hover information', () => {
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: [],
+      inventory: [],
+      difficulty: 0,
+      hovers: true,
+    }).then(({ steps, hovers, hoverDocs }) => {
+      const goal = steps[0].goals[0]
+      expect(flatten(goal.typeWithHover)).to.eq(goal.type)
+      for (const hyp of goal.hyps) {
+        expect(flatten(hyp.typeWithHover)).to.eq(hyp.type)
+      }
+      // `x + x = y`: the outer tag spans the whole equation, so hovering `=`
+      // highlights both sides
+      const [eq, eqCode] = goal.typeWithHover.tag
+      expect(hovers[eq].type).to.eq('Prop')
+      const [lhs, op, rhs] = eqCode.append
+      expect(op).to.deep.eq({ text: ' = ' })
+      expect(flatten(lhs)).to.eq('x + x')
+      expect(hovers[lhs.tag[0]].type).to.eq('Nat')
+      expect(hovers[rhs.tag[0]].expr).to.eq('y')
+      // the same `x` shares one entry
+      const [x1, , x2] = lhs.tag[1].append
+      expect(x1.tag[0]).to.eq(x2.tag[0])
+      expect(hovers[x1.tag[0]].type).to.eq('Nat')
+      expect(hoverDocs[hovers[eq].doc]).to.contain('equality')
+    })
+  })
+  it('shares hover information between steps', () => {
+    checkProof({
+      world: 'TestWorld',
+      level: 1,
+      tactics: ['replace h := h.symm'],
+      inventory: [],
+      difficulty: 0,
+      hovers: true,
+    }).then(({ steps, hovers }) => {
+      const hypH = (step) =>
+        steps[step].goals[0].hyps.find((hyp) => hyp.names.includes('h'))
+      const before = hypH(0).typeWithHover
+      const after = hypH(1).typeWithHover
+      // the replaced `h` gets a new entry ...
+      expect(before.tag[0]).not.to.eq(after.tag[0])
+      expect(hovers[before.tag[0]].expr).to.eq('@Eq Nat x 2')
+      expect(hovers[after.tag[0]].expr).to.eq('@Eq Nat 2 x')
+      // ... while the unchanged goal is shared
+      expect(steps[1].goals[0].typeWithHover).to.deep.eq(
+        steps[0].goals[0].typeWithHover,
+      )
+      // each distinct subexpression is stored only once
+      const indices = new Set()
+      const collect = (code) => {
+        if ('text' in code) return
+        if ('append' in code) return code.append.forEach(collect)
+        indices.add(code.tag[0])
+        collect(code.tag[1])
+      }
+      for (const step of steps) {
+        for (const goal of step.goals) {
+          collect(goal.typeWithHover)
+          goal.hyps.forEach((hyp) => collect(hyp.typeWithHover))
+        }
+      }
+      expect(indices.size).to.eq(hovers.length)
+    })
   })
 })
 

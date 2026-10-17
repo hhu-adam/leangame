@@ -14,6 +14,8 @@ structure CheckProofParams where
   levelId : Nat
   /-- 0-based line in the document of the first tactic. -/
   proofStartLine : Nat
+  /-- Whether to include hover information for goals and hypotheses. -/
+  hovers : Bool := false
   deriving FromJson, ToJson
 
 def checkProof (p : CheckProofParams) : RequestM (RequestTask CheckResult) := do
@@ -61,6 +63,7 @@ def checkProof (p : CheckProofParams) : RequestM (RequestTask CheckResult) := do
         return res
 
       let mut steps : Array CheckStep := #[]
+      let mut hoverTable : HoverTable := {}
       let mut prevLspPos : Lsp.Position := ⟨p.proofStartLine, 0⟩
       for ((pos, tactic), i) in stepPositions.zipIdx do
         let lspPos := text.utf8PosToLspPos pos
@@ -78,15 +81,28 @@ def checkProof (p : CheckProofParams) : RequestM (RequestTask CheckResult) := do
           for { ctxInfo := ci, tacticInfo := ti, useAfter, .. } in snap.infoTree.goalsAt? text pos do
             let ci := { ci with mctx := if useAfter then ti.mctxAfter else ti.mctxBefore }
             let goalMVars := if useAfter then ti.goalsAfter else ti.goalsBefore
-            goals := goals ++ (← ci.runMetaM {} do
+            let interactiveGoals ← ci.runMetaM {} do
               let some level ← getLevel? levelId
                 | throwError "Level not found: {levelId.world} {levelId.level}"
               goalMVars.toArray.mapM fun goal => do
-                return CheckGoal.ofInteractive (← goalToInteractive goal) (← findHints goal level))
+                return (← goalToInteractive goal, ← findHints goal level)
+            for (goal, hints) in interactiveGoals do
+              if p.hovers then
+                let (checkGoal, table) ←
+                  (CheckGoal.ofInteractiveWithHovers goal hints).run hoverTable
+                hoverTable := table
+                goals := goals.push checkGoal
+              else
+                goals := goals.push (CheckGoal.ofInteractive goal hints)
 
         steps := steps.push {
           tactic
           goals
           diagnostics := stepDiags.map (CheckDiagnostic.ofInteractive p.proofStartLine) }
 
-      return { steps, completed, completedWithWarnings }
+      return {
+        steps,
+        completed,
+        completedWithWarnings
+        hovers := hoverTable.hovers
+        hoverDocs := hoverTable.docs }

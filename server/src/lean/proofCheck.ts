@@ -26,6 +26,7 @@ export function checkProof(input: ProofCheck): Promise<ApiProofCheckResult> {
 
 async function checkProofAux({
   difficulty,
+  hovers = false,
   instance,
   inventory,
   level,
@@ -96,6 +97,7 @@ async function checkProofAux({
           worldId: world,
           levelId: level,
           proofStartLine,
+          hovers: hovers,
         },
       },
     )
