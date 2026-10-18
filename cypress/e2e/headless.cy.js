@@ -308,6 +308,32 @@ describe('Server communication', () => {
       expect(indices.size).to.eq(hovers.length)
     })
   })
+  it('replaces a waiting check by a newer one', () => {
+    const post = (tactics) =>
+      fetch(`/api/lean/instances/${instanceId}/check`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          world: 'TestWorld',
+          level: 1,
+          tactics,
+          inventory: [],
+          difficulty: 0,
+        }),
+      }).then(async (res) => ({ status: res.status, body: await res.json() }))
+    // `running` keeps Lean busy while the other two arrive
+    const running = post(['sleep 3000'])
+    const replaced = post(['rw [g]'])
+    const newest = post(['rw [g]', 'rw [h]'])
+    cy.wrap(Promise.all([running, replaced, newest]), { timeout: 30000 }).then(
+      ([running, replaced, newest]) => {
+        expect(running.status).to.eq(200)
+        expect(replaced.status).to.eq(409)
+        expect(newest.status).to.eq(200)
+        expect(newest.body.completed).to.eq(true)
+      },
+    )
+  })
 })
 
 describe('Data', () => {

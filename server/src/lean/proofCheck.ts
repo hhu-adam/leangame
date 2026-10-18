@@ -8,7 +8,13 @@ import type {
   ApiProofCheckResult,
   LeanInstance,
 } from '../api.js'
-import { closeDoc, syncDoc, withQueue } from './openDocuments.js'
+import {
+  CheckTimeoutError,
+  closeDoc,
+  type OpenDoc,
+  scheduleCheck,
+  syncDoc,
+} from './openDocuments.js'
 
 /** Extend the API-input with the Lean instance */
 interface ProofCheck extends ApiProofCheckInput {
@@ -20,19 +26,38 @@ async function readJson<T>(filePath: string): Promise<T> {
   return JSON.parse(content) as T
 }
 
-export function checkProof(input: ProofCheck): Promise<ApiProofCheckResult> {
-  return withQueue(input.instance.id, () => checkProofAux(input))
+/** The document a running check is working on */
+interface CheckDoc {
+  uri?: string
+  doc?: OpenDoc
+  timedOut?: boolean
 }
 
-async function checkProofAux({
-  difficulty,
-  hovers = false,
-  instance,
-  inventory,
-  level,
-  tactics,
-  world,
-}: ProofCheck): Promise<ApiProofCheckResult> {
+export function checkProof(input: ProofCheck): Promise<ApiProofCheckResult> {
+  const current: CheckDoc = {}
+  return scheduleCheck(
+    input.instance.id,
+    () => checkProofAux(input, current),
+    () => {
+      current.timedOut = true
+      // stop the elaboration by killing the file worker
+      if (current.uri) closeDoc(input.instance, current.uri, current.doc)
+    },
+  )
+}
+
+async function checkProofAux(
+  {
+    difficulty,
+    hovers = false,
+    instance,
+    inventory,
+    level,
+    tactics,
+    world,
+  }: ProofCheck,
+  current: CheckDoc,
+): Promise<ApiProofCheckResult> {
   await instance.lspReady
 
   const levelDataPath = gameDataFilePath(
@@ -74,8 +99,12 @@ async function checkProofAux({
     path.posix.join(instance.gamePathBwrap, modulePath),
   ).toString()
 
+  // a newer check may already be using the document
+  if (current.timedOut) throw new CheckTimeoutError()
+  current.uri = uri
   try {
-    const { version } = await syncDoc(instance, uri, content)
+    current.doc = await syncDoc(instance, uri, content)
+    const { version } = current.doc
     await instance.client.request('textDocument/waitForDiagnostics', {
       uri,
       version,
@@ -103,7 +132,7 @@ async function checkProofAux({
     )
   } catch (err) {
     // start over with a fresh file worker on the next check
-    await closeDoc(instance, uri)
+    await closeDoc(instance, uri, current.doc)
     throw err
   }
 }

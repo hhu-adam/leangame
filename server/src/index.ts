@@ -2,6 +2,10 @@ import express from 'express'
 import { gameDataFilePath, i18nFilePath, requireGame } from './gameData.js'
 import { checkProof } from './lean/proofCheck.js'
 import {
+  CheckSupersededError,
+  CheckTimeoutError,
+} from './lean/openDocuments.js'
+import {
   getAllInstances,
   getInstance,
   startInstance,
@@ -88,6 +92,14 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
     const result = await checkProof({ ...input, instance })
     res.json(result)
   } catch (err) {
+    if (err instanceof CheckSupersededError) {
+      res.status(409).json({ error: err.message })
+      return
+    }
+    if (err instanceof CheckTimeoutError) {
+      res.status(504).json({ error: err.message })
+      return
+    }
     // TODO: do not expose error message, write to logs instead
     res
       .status(500)
