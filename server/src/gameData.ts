@@ -7,7 +7,7 @@ import { isDevMode } from './utils/devMode.js'
 const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', 'TestGame')
 const REPO_PARENT_DIR = path.resolve(import.meta.dirname, '..', '..', '..')
 
-const GAMES_DIR = path.resolve(
+export const GAMES_DIR = path.resolve(
   import.meta.dirname,
   '..',
   process.env.GAMES_DIR ?? 'games',
@@ -28,11 +28,16 @@ export function requireGame(owner: string, game: string, res: Response) {
     return undefined
   }
 
-  const gamePath = safeJoin(GAMES_DIR, owner.toLowerCase(), game.toLowerCase())
+  const gamePath = importedGamePath(owner, game)
   if (gamePath && existsSync(gamePath)) return gamePath
 
   res.status(404).json({ error: 'Game not found' })
   return undefined
+}
+
+/** The folder of an imported game, or `undefined` for invalid names */
+export function importedGamePath(owner: string, game: string) {
+  return safeJoin(GAMES_DIR, owner.toLowerCase(), game.toLowerCase())
 }
 
 export function gameDataFilePath(gamePath: string, filename: string) {

@@ -1,36 +1,17 @@
 import { randomUUID } from 'node:crypto'
-import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process'
 import { createLspClient } from './lspClient.js'
 import type { LeanInstance } from '../api.js'
-import path from 'node:path'
 import { forgetInstanceDocs } from './openDocuments.js'
+import { noBwrap, spawnGame } from './sandbox.js'
 
 const instances = new Map<string, LeanInstance>()
-
-const isDevelopment = process.env.NODE_ENV === 'development'
-const noBwrap = process.env.NO_BWRAP == 'true' || isDevelopment
 
 export function startInstance(
   gamePath: string,
   /** The TestGame doesn't have its own copy of the server and needs leangame as a local dependency */
   includeServerCopy?: boolean,
 ): LeanInstance {
-  let child: ChildProcessWithoutNullStreams
-  if (noBwrap) {
-    child = spawn('lake', ['serve', '--'], { cwd: gamePath })
-  } else {
-    let options = [gamePath]
-
-    if (includeServerCopy) {
-      const lean4GameFolder = path.join(import.meta.dirname, '..', '..', 'lean')
-      options.push('--ro-bind', lean4GameFolder, '/lean')
-    }
-
-    child = spawn(
-      path.join(import.meta.dirname, '..', 'scripts', 'bubblewrap.sh'),
-      options,
-    )
-  }
+  const child = spawnGame(gamePath, ['lake', 'serve', '--'], includeServerCopy)
 
   const client = createLspClient(child)
 
@@ -105,4 +86,16 @@ export function stopInstance(id: string): boolean {
     instance.process.kill('SIGTERM')
   }
   return true
+}
+
+/** Stops all running instances of a game, returns how many were stopped */
+export function stopGameInstances(gamePath: string): number {
+  let stopped = 0
+  for (const instance of instances.values()) {
+    if (instance.gamePath === gamePath && instance.status !== 'exited') {
+      instance.process.kill('SIGTERM')
+      stopped++
+    }
+  }
+  return stopped
 }

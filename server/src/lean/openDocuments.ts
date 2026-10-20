@@ -140,6 +140,8 @@ export async function syncDoc(
     doc = { uri, version: 1, text }
     await instance.client.notify('textDocument/didOpen', {
       textDocument: { uri, languageId: 'lean4', version: doc.version, text },
+      // never let a check build the game or its dependencies. Imported games must come fully built.
+      dependencyBuildMode: 'never',
     })
   } else if (doc.text !== text) {
     doc.version++

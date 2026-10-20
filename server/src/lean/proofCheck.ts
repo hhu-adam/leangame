@@ -133,6 +133,13 @@ async function checkProofAux(
   } catch (err) {
     // start over with a fresh file worker on the next check
     await closeDoc(instance, uri, current.doc)
+    // the RPC method is missing if the imports (including `GameServer`)
+    // could not be loaded. Checks never build them, see `syncDoc`.
+    if ((err as Error).message?.includes("No RPC method 'Game.checkProof'")) {
+      throw new Error(
+        'Could not load the imports of the level. Is the game fully built?',
+      )
+    }
     throw err
   }
 }

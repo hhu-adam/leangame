@@ -5,13 +5,19 @@ set -euo pipefail
 # Limit CPU time per process to 1h
 ulimit -t 3600
 # NB: The RSS limit (ulimit -m) is not supported by modern linux!
+# Usage: bubblewrap.sh GAME_DIR [BWRAP_OPTIONS...] -- COMMAND...
 GAME_DIR="$(realpath "$1")"
 shift # remove $1 from the arguments
 LEAN_ROOT="$(cd "$GAME_DIR" && lean --print-prefix)"
 
+BWRAP_OPTS=()
+while [ "$#" -gt 0 ] && [ "$1" != "--" ]; do
+  BWRAP_OPTS+=("$1")
+  shift
+done
+shift # remove the `--`
 
 GAMESERVER_PATH="/game"
-GAMESERVER_CMD=(lake serve --)
 
 # Docker forbids mounting a fresh procfs; BWRAP_BIND_PROC=true reuses the host's (read-only).
 # The host's /proc doesn't match a new pid namespace (lean can't find its own executable),
@@ -43,5 +49,5 @@ exec bwrap \
   --unshare-cgroup \
   --die-with-parent \
   --chdir "$GAMESERVER_PATH" \
-  "$@" \
-  "${GAMESERVER_CMD[@]}"
+  "${BWRAP_OPTS[@]}" \
+  "$@"

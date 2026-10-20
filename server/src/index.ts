@@ -13,6 +13,11 @@ import {
 } from './lean/leanInstances.js'
 import path from 'path'
 import { sendJsonFile } from './utils/response.js'
+import {
+  getImportStatus,
+  isValidRepoName,
+  startImport,
+} from './import/gameImport.js'
 import { ApiProofCheckInput } from './api.js'
 
 const PORT = process.env.PORT || 8000
@@ -105,6 +110,24 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
       .status(500)
       .json({ error: `Failed to check proof: ${(err as Error).message}` })
   }
+})
+
+app.post('/api/import/:owner/:repo/trigger', (req, res) => {
+  const { owner, repo } = req.params
+  if (!isValidRepoName(owner, repo)) {
+    res.status(400).json({ error: 'Invalid repository name' })
+    return
+  }
+  res.status(202).json(startImport(owner, repo))
+})
+
+app.get('/api/import/:owner/:repo', (req, res) => {
+  const status = getImportStatus(req.params.owner, req.params.repo)
+  if (!status) {
+    res.status(404).json({ error: 'No import found' })
+    return
+  }
+  res.json(status)
 })
 
 app.get('/api/data/:owner/:game/game', (req, res) => {
