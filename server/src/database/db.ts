@@ -2,6 +2,8 @@ import { mkdirSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import {
+  DbInsertGameActivity,
+  DbGameActivityRow,
   DbGameImportPerDayRow,
   DbGameImportPerGameRow,
   DbImportStats,
@@ -86,4 +88,54 @@ export function getImportStats(): Map<string, DbImportStats> {
     stats.get(`${owner}/${repo}`)!.importsPerDay[day] = count
   }
   return stats
+}
+
+/** The start of the current 30-minute interval, e.g. `"2026-10-22T14:30Z"` */
+function currentInterval(): string {
+  const now = new Date()
+  now.setUTCMinutes(now.getUTCMinutes() < 30 ? 0 : 30, 0, 0)
+  return now.toISOString().slice(0, 16) + 'Z'
+}
+
+/** Adds to the play statistics of the current interval */
+export function addGameActivity(activity: DbInsertGameActivity): void {
+  db.prepare(
+    `INSERT INTO game_activity
+       (interval, owner, repo, language, preferred_language, sessions, checks, play_seconds)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT (interval, owner, repo, language, preferred_language) DO UPDATE SET
+       sessions = sessions + excluded.sessions,
+       checks = checks + excluded.checks,
+       play_seconds = play_seconds + excluded.play_seconds`,
+  ).run(
+    currentInterval(),
+    activity.owner.toLowerCase(),
+    activity.repo.toLowerCase(),
+    activity.language,
+    activity.preferredLanguage,
+    activity.sessions,
+    activity.checks,
+    Math.round(activity.playSeconds),
+  )
+}
+
+/** The play statistics, optionally restricted to the intervals in `[from, to)` */
+export function getGameActivity(
+  from?: string,
+  to?: string,
+): DbGameActivityRow[] {
+  return db
+    .prepare(
+      `SELECT interval, owner, repo, language, preferred_language AS preferredLanguage,
+         sessions, checks, play_seconds AS playSeconds
+       FROM game_activity
+       WHERE (? IS NULL OR interval >= ?) AND (? IS NULL OR interval < ?)
+       ORDER BY interval, owner, repo, language, preferred_language`,
+    )
+    .all(
+      from ?? null,
+      from ?? null,
+      to ?? null,
+      to ?? null,
+    ) as unknown as DbGameActivityRow[]
 }

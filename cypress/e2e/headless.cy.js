@@ -351,25 +351,6 @@ describe('Data', () => {
       }
     })
   })
-  it('can list import statistics', () => {
-    cy.request('GET', '/stats/imports').then((res) => {
-      expect(res.status).to.eq(200)
-      expect(res.body).to.be.an('array')
-      for (const game of res.body) {
-        expect(game).to.have.all.keys(
-          'owner',
-          'repo',
-          'toolchain',
-          'leanVersion',
-          'firstImportedAt',
-          'lastImportedAt',
-          'importCount',
-          'importsPerDay',
-          'fullyBuilt',
-        )
-      }
-    })
-  })
   it('can get game info', () => {
     cy.request('GET', '/api/data/test/testgame/game')
       .then((res) => {
@@ -428,5 +409,83 @@ describe('Data', () => {
       .then((data) => {
         expect(data['Test Level']).to.eq('Testlevel auf Deutsch')
       })
+  })
+})
+
+describe('Statistics', () => {
+  /** Lean instance for the tests which need a check */
+  let statsInstanceId
+  before(() => {
+    cy.request('POST', '/api/lean/start/test/testgame').then((res) => {
+      expect(res.status).to.eq(201)
+      statsInstanceId = res.body.id
+    })
+  })
+  after(() => {
+    if (statsInstanceId) {
+      cy.request('DELETE', `/api/lean/instances/${statsInstanceId}`)
+    }
+  })
+  it('counts checks in the play statistics', () => {
+    cy.request({
+      method: 'POST',
+      url: `/api/lean/instances/${statsInstanceId}/check`,
+      headers: { 'Accept-Language': 'fr-CH,fr;q=0.9,en;q=0.8' },
+      body: {
+        world: 'TestWorld',
+        level: 1,
+        tactics: ['rw [g]'],
+        inventory: [],
+        difficulty: 0,
+        language: 'de',
+      },
+    })
+    cy.request('GET', '/stats/games').then((res) => {
+      const rows = res.body.filter(
+        (row) =>
+          row.owner === 'test' &&
+          row.repo === 'testgame' &&
+          row.language === 'de' &&
+          row.preferredLanguage === 'fr',
+      )
+      expect(rows).to.have.length.of.at.least(1)
+    })
+  })
+  it('can list play statistics', () => {
+    cy.request('GET', '/stats/games?from=2026-01-01').then((res) => {
+      expect(res.status).to.eq(200)
+      expect(res.body).to.be.an('array')
+      for (const row of res.body) {
+        expect(row).to.have.all.keys(
+          'interval',
+          'owner',
+          'repo',
+          'language',
+          'preferredLanguage',
+          'sessions',
+          'checks',
+          'playSeconds',
+        )
+      }
+    })
+  })
+  it('can list import statistics', () => {
+    cy.request('GET', '/stats/imports').then((res) => {
+      expect(res.status).to.eq(200)
+      expect(res.body).to.be.an('array')
+      for (const game of res.body) {
+        expect(game).to.have.all.keys(
+          'owner',
+          'repo',
+          'toolchain',
+          'leanVersion',
+          'firstImportedAt',
+          'lastImportedAt',
+          'importCount',
+          'importsPerDay',
+          'fullyBuilt',
+        )
+      }
+    })
   })
 })

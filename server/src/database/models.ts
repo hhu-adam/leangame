@@ -35,3 +35,28 @@ export interface DbImportStats {
   /** build state of the last import */
   fullyBuilt: boolean
 }
+
+export interface DbInsertGameActivity {
+  owner: string
+  repo: string
+  language: string
+  /** first language of the browser's `Accept-Language`, e.g. `fr` */
+  preferredLanguage: string
+  sessions: number
+  checks: number
+  playSeconds: number
+}
+
+/** A row of `game_activity` */
+export interface DbGameActivityRow {
+  /** start of the 30-minute interval, e.g. `"2026-10-22T14:30Z"` */
+  interval: string
+  owner: string
+  repo: string
+  language: string
+  /** first language of the browser's `Accept-Language`, e.g. `fr` */
+  preferredLanguage: string
+  sessions: number
+  checks: number
+  playSeconds: number
+}

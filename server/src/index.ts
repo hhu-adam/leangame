@@ -2,6 +2,7 @@ import express from 'express'
 import {
   gameDataFilePath,
   i18nFilePath,
+  isTestGame,
   listGames,
   requireGame,
 } from './gameData.js'
@@ -24,7 +25,7 @@ import {
   startImport,
 } from './import/gameImport.js'
 import { ApiProofCheckInput } from './api.js'
-import { listImportStats } from './stats.js'
+import { listGameActivity, listImportStats, recordCheck } from './stats.js'
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -40,7 +41,11 @@ app.post('/api/lean/start/:owner/:game', (req, res) => {
   const gamePath = requireGame(owner, game, res)
   if (!gamePath) return
   try {
-    const instance = startInstance(gamePath, game.toLowerCase() === 'testgame')
+    const instance = startInstance(
+      gamePath,
+      { owner: owner.toLowerCase(), repo: game.toLowerCase() },
+      isTestGame(owner, game),
+    )
     res.status(201).json({
       id: instance.id,
       status: instance.status,
@@ -99,6 +104,7 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
     res.status(404).json({ error: 'Instance not found' })
     return
   }
+  recordCheck(instance, input.language, req.acceptsLanguages())
   try {
     const result = await checkProof({ ...input, instance })
     res.json(result)
@@ -118,8 +124,7 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
   }
 })
 
-app.get('/api/import/:owner/:repo/trigger', (req, res) => {
-  // FIXME: change back to POST
+app.post('/api/import/:owner/:repo/trigger', (req, res) => {
   const { owner, repo } = req.params
   if (!isValidRepoName(owner, repo)) {
     res.status(400).json({ error: 'Invalid repository name' })
@@ -143,6 +148,16 @@ app.get('/api/games', async (_req, res) => {
 
 app.get('/stats/imports', async (_req, res) => {
   res.json(await listImportStats())
+})
+
+app.get('/stats/games', (req, res) => {
+  const { from, to } = req.query
+  res.json(
+    listGameActivity(
+      typeof from === 'string' ? from : undefined,
+      typeof to === 'string' ? to : undefined,
+    ),
+  )
 })
 
 app.get('/api/data/:owner/:game/game', (req, res) => {

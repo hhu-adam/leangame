@@ -16,6 +16,7 @@
 | `IMPORT_MAX_UNPACKED_MB` | number                        | maximal unpacked size of an artifact                                                                                                                                                                                           | `20480`                  |
 | `DATABASE_PATH`          | string                        | path of the SQLite database, relative from the `server/` folder                                                                                                                                                                | `data/leangame.db`       |
 | `CONFIG_PATH`            | string                        | path of the config file, relative from the `server/` folder                                                                                                                                                                    | `config.json`            |
+| `STATS_IDLE_MINUTES`     | number                        | a gap between two checks longer than this counts as a break in the play statistics, see [statistics](stats.md)                                                                                                                 | `20`                     |
 
 ## Configuration
 

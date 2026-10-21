@@ -8,6 +8,8 @@ const instances = new Map<string, LeanInstance>()
 
 export function startInstance(
   gamePath: string,
+  /** the game as requested by the player, lower case, for the play statistics */
+  game: { owner: string; repo: string },
   /** The TestGame doesn't have its own copy of the server and needs leangame as a local dependency */
   includeServerCopy?: boolean,
 ): LeanInstance {
@@ -44,6 +46,7 @@ export function startInstance(
     exitCode: null,
     client,
     lspReady,
+    game,
   }
 
   child.stderr?.on('data', (chunk: Buffer) => {

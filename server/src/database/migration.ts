@@ -16,7 +16,21 @@ const MIGRATIONS = [
     toolchain   TEXT NOT NULL,
     fully_built INTEGER NOT NULL   -- 0 or 1
   );
-  CREATE INDEX game_imports_game ON game_imports (owner, repo, imported_at);`,
+  CREATE INDEX game_imports_game ON game_imports (owner, repo, imported_at);
+
+  -- anonymous play statistics, aggregated per 30-minute interval
+  CREATE TABLE game_activity (
+    interval           TEXT NOT NULL,    -- start of the interval, UTC, e.g. '2026-10-22T14:30Z'
+    owner              TEXT NOT NULL,    -- lower case
+    repo               TEXT NOT NULL,    -- lower case
+    language           TEXT NOT NULL,    -- e.g. 'de', or 'unknown'
+    -- first language of the browser's \`Accept-Language\`, e.g. 'fr', or 'unknown'
+    preferred_language TEXT NOT NULL,
+    sessions           INTEGER NOT NULL, -- instances whose first check fell into this interval
+    checks             INTEGER NOT NULL,
+    play_seconds       INTEGER NOT NULL, -- active play time, without breaks
+    PRIMARY KEY (interval, owner, repo, language, preferred_language)
+  );`,
 ]
 
 /**

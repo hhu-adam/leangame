@@ -12,9 +12,14 @@ import { subfolders } from './utils/fs.js'
 const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', 'TestGame')
 const REPO_PARENT_DIR = path.resolve(import.meta.dirname, '..', '..', '..')
 
+/** The TestGame is only available as `test/testgame` */
+export function isTestGame(owner: string, game: string) {
+  return owner.toLowerCase() === 'test' && game.toLowerCase() === 'testgame'
+}
+
 /** returns the path to the game or writes a 404 if the game has not been found */
 export function requireGame(owner: string, game: string, res: Response) {
-  if (game.toLowerCase() === 'testgame') {
+  if (isTestGame(owner, game)) {
     return TEST_GAME_PATH
   }
 

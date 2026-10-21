@@ -10,6 +10,8 @@ export interface ApiProofCheckInput {
   tactics: string[]
   /** include hover information for goals and hypotheses */
   hovers?: boolean
+  /** the player's language, e.g. `de`, for the anonymous play statistics */
+  language?: string
 }
 
 /** API result of a proof validation */
@@ -97,6 +99,10 @@ export interface LeanInstance {
   client: LspClient
   /** resolves once the LSP `initialize`/`initialized` handshake has completed */
   lspReady: Promise<void>
+  /** the game as requested by the player, lower case, for the play statistics */
+  game: { owner: string; repo: string }
+  /** time of the last check in ms, for the play statistics. Never stored. */
+  lastCheckAt?: number
 }
 
 export type LeanInstanceStatus = 'starting' | 'running' | 'exited'
@@ -128,4 +134,21 @@ export interface ApiGameImportStats {
   importsPerDay: Record<string, number>
   /** whether the last import was fully built */
   fullyBuilt: boolean | null
+}
+
+/** Anonymous play statistics of a game in one 30-minute interval */
+export interface ApiGameActivityStats {
+  /** start of the interval, UTC, e.g. `"2026-10-22T14:30Z"` */
+  interval: string
+  owner: string
+  repo: string
+  /** the language the game is played in, e.g. `de`, or `unknown` */
+  language: string
+  /** first language of the browser's `Accept-Language`, e.g. `fr`, or `unknown` */
+  preferredLanguage: string
+  /** players whose first check fell into this interval */
+  sessions: number
+  checks: number
+  /** active play time, without breaks */
+  playSeconds: number
 }
