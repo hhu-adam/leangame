@@ -47,6 +47,12 @@ jobs:
         if: matrix.os == 'macos-latest' && matrix.browser == 'firefox'
         uses: browser-actions/setup-firefox@v1
 
+      # `server/TestGame/lean-toolchain` is a symlink, which Git on Windows checks out
+      # as a plain text file by default
+      - name: Enable symlinks (Windows)
+        if: matrix.os == 'windows-latest'
+        run: git config --global core.symlinks true
+
       - uses: actions/checkout@v7
 
       - name: Setup Node.js

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "analyse": "NODE_OPTIONS=--max-old-space-size=8192 npx vite-bundle-analyzer",
+    "analyse": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npx vite-bundle-analyzer",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
