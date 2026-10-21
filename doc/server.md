@@ -14,3 +14,16 @@
 | `GITHUB_API_URL`         | string                        | GitHub API base URL, e.g. for GitHub Enterprise                                                                                                                                                                                | `https://api.github.com` |
 | `IMPORT_MAX_DOWNLOAD_MB` | number                        | maximal size of a downloaded artifact                                                                                                                                                                                          | `2048`                   |
 | `IMPORT_MAX_UNPACKED_MB` | number                        | maximal unpacked size of an artifact                                                                                                                                                                                           | `20480`                  |
+| `DATABASE_PATH`          | string                        | path of the SQLite database, relative from the `server/` folder                                                                                                                                                                | `data/leangame.db`       |
+| `CONFIG_PATH`            | string                        | path of the config file, relative from the `server/` folder                                                                                                                                                                    | `config.json`            |
+
+## Configuration
+
+`server/config.json` (see `CONFIG_PATH`) is read on every request, so changes apply without a restart. All fields are optional.
+
+| Field               | Type                                | Description                                                                                                 | Default |
+| ------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `featuredGames`     | `{ owner: string, repo: string }[]` | games listed first by `/api/games`, in this order. Featured games which are not imported are skipped.       | `[]`    |
+| `listImportedGames` | boolean                             | whether `/api/games` also lists all other imported games. `/stats/imports` always lists all imported games. | `false` |
+
+In development mode, `/api/games` also lists the local games: the folders next to this repository with a `.lake/gamedata/game.json`, with owner `local`.

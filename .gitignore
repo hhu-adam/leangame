@@ -29,6 +29,9 @@ dist-ssr
 # Locally fetched games
 /server/games
 
+# Database
+/server/data
+
 # Cypress
 cypress/screenshots
 

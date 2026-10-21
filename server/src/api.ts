@@ -100,3 +100,32 @@ export interface LeanInstance {
 }
 
 export type LeanInstanceStatus = 'starting' | 'running' | 'exited'
+
+/** A game to be displayed on the landing page */
+export interface ApiGameInfo {
+  owner: string
+  repo: string
+  /** listed in the `featuredGames` of the server config */
+  featured: boolean
+  /** `tile` and `settings` of the game's `game.json` */
+  tile: unknown
+  settings: unknown
+}
+
+/** Statistic about a game's import history */
+export interface ApiGameImportStats {
+  owner: string
+  repo: string
+  /** from `lean-toolchain`, e.g. `leanprover/lean4:v4.23.0` */
+  toolchain: string | null
+  /** e.g. `v4.23.0` */
+  leanVersion: string | null
+  /** `null` for games imported before the import history was recorded */
+  firstImportedAt: string | null
+  lastImportedAt: string | null
+  importCount: number
+  /** e.g. `"2026-10-18"` → 2 */
+  importsPerDay: Record<string, number>
+  /** whether the last import was fully built */
+  fullyBuilt: boolean | null
+}

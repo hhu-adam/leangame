@@ -335,8 +335,41 @@ describe('Server communication', () => {
     )
   })
 })
-
 describe('Data', () => {
+  it('can list featured games', () => {
+    cy.request('GET', '/api/games').then((res) => {
+      expect(res.status).to.eq(200)
+      expect(res.body).to.be.an('array')
+      for (const game of res.body) {
+        expect(game).to.have.all.keys(
+          'owner',
+          'repo',
+          'featured',
+          'tile',
+          'settings',
+        )
+      }
+    })
+  })
+  it('can list import statistics', () => {
+    cy.request('GET', '/stats/imports').then((res) => {
+      expect(res.status).to.eq(200)
+      expect(res.body).to.be.an('array')
+      for (const game of res.body) {
+        expect(game).to.have.all.keys(
+          'owner',
+          'repo',
+          'toolchain',
+          'leanVersion',
+          'firstImportedAt',
+          'lastImportedAt',
+          'importCount',
+          'importsPerDay',
+          'fullyBuilt',
+        )
+      }
+    })
+  })
   it('can get game info', () => {
     cy.request('GET', '/api/data/test/testgame/game')
       .then((res) => {

@@ -1,0 +1,43 @@
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
+/*
+The server's configuration file, by default `server/config.json`. It is read on every use,
+so changes apply without a restart.
+*/
+
+const CONFIG_PATH = path.resolve(
+  import.meta.dirname,
+  '..',
+  process.env.CONFIG_PATH ?? 'config.json',
+)
+
+export interface ServerConfig {
+  /** The games listed first on the landing page, in this order */
+  featuredGames: { owner: string; repo: string }[]
+  /**
+   * Whether `/api/games` also lists the imported games which are not featured.
+   * `/stats/imports` always lists all imported games.
+   */
+  listImportedGames: boolean
+}
+
+const DEFAULT_CONFIG: ServerConfig = {
+  featuredGames: [],
+  listImportedGames: false,
+}
+
+/** The configuration, with defaults for a missing file or missing fields */
+export async function readConfig(): Promise<ServerConfig> {
+  let content: string
+  try {
+    content = await fs.readFile(CONFIG_PATH, 'utf-8')
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return DEFAULT_CONFIG
+    throw err
+  }
+  return {
+    ...DEFAULT_CONFIG,
+    ...(JSON.parse(content) as Partial<ServerConfig>),
+  }
+}

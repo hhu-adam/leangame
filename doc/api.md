@@ -7,6 +7,7 @@
 | `/api/lean/instances/:id/check`              | POST       | submit a proof for a level                                         |
 | `/api/import/:owner/:repo/trigger`           | POST       | start importing a game from GitHub                                 |
 | `/api/import/:owner/:repo`                   | GET        | get the status of the import                                       |
+| `/api/games`                                 | GET        | games for the landing page                                         |
 | `/api/data/:owner/:game/game`                | GET        | game info                                                          |
 | `/api/data/:owner/:game/inventory`           | GET        | inventory of the game                                              |
 | `/api/data/:owner/:game/level/:world/:level` | GET        | info about a level                                                 |

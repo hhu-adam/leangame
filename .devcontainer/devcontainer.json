@@ -14,7 +14,8 @@
       "extensions": [
         "oxc.oxc-vscode",
         "bradlc.vscode-tailwindcss",
-        "leanprover.lean4"
+        "leanprover.lean4",
+        "qwtel.sqlite-viewer"
       ]
     }
   },

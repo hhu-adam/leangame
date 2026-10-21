@@ -1,5 +1,10 @@
 import express from 'express'
-import { gameDataFilePath, i18nFilePath, requireGame } from './gameData.js'
+import {
+  gameDataFilePath,
+  i18nFilePath,
+  listGames,
+  requireGame,
+} from './gameData.js'
 import { checkProof } from './lean/proofCheck.js'
 import {
   CheckSupersededError,
@@ -19,6 +24,7 @@ import {
   startImport,
 } from './import/gameImport.js'
 import { ApiProofCheckInput } from './api.js'
+import { listImportStats } from './stats.js'
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -112,7 +118,8 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
   }
 })
 
-app.post('/api/import/:owner/:repo/trigger', (req, res) => {
+app.get('/api/import/:owner/:repo/trigger', (req, res) => {
+  // FIXME: change back to POST
   const { owner, repo } = req.params
   if (!isValidRepoName(owner, repo)) {
     res.status(400).json({ error: 'Invalid repository name' })
@@ -128,6 +135,14 @@ app.get('/api/import/:owner/:repo', (req, res) => {
     return
   }
   res.json(status)
+})
+
+app.get('/api/games', async (_req, res) => {
+  res.json(await listGames())
+})
+
+app.get('/stats/imports', async (_req, res) => {
+  res.json(await listImportStats())
 })
 
 app.get('/api/data/:owner/:game/game', (req, res) => {

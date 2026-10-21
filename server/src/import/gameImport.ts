@@ -5,9 +5,11 @@ import path from 'node:path'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { ReadableStream as NodeReadableStream } from 'node:stream/web'
-import { GAMES_DIR, gameDataFilePath, importedGamePath } from '../gameData.js'
+import { gameDataFilePath } from '../gameData.js'
 import { stopGameInstances } from '../lean/leanInstances.js'
+import { addImport } from '../database/db.js'
 import { spawnGame } from '../lean/sandbox.js'
+import { GAMES_DIR, importedGamePath } from './imported.js'
 
 /*
 Imports a game from GitHub: the game's repository builds the game in a GitHub action and
@@ -135,13 +137,20 @@ async function doImport(owner: string, repo: string, status: ImportStatus) {
       )
     }
 
-    await installToolchain(gamePath, log)
-    await checkFullyBuilt(gamePath, status)
+    const toolchain = await installToolchain(gamePath, log)
+    const fullyBuilt = await checkFullyBuilt(gamePath, status)
 
     const stopped = stopGameInstances(targetPath)
     if (stopped > 0) log(`Stopped ${stopped} running instance(s) of the game.`)
     await replaceGame(gamePath, targetPath, tmpPath)
     log(`Installed the game in ${path.relative(GAMES_DIR, targetPath)}.`)
+    addImport({
+      owner,
+      repo,
+      artifactId: artifact.id,
+      toolchain,
+      fullyBuilt,
+    })
   } finally {
     await fs.rm(tmpPath, { recursive: true, force: true })
   }
@@ -292,7 +301,11 @@ async function checkSymlinks(gamePath: string) {
   }
 }
 
-async function installToolchain(gamePath: string, log: (line: string) => void) {
+/** Installs the game's toolchain and returns it */
+async function installToolchain(
+  gamePath: string,
+  log: (line: string) => void,
+): Promise<string> {
   const toolchain = (
     await fs.readFile(path.join(gamePath, 'lean-toolchain'), 'utf-8')
   ).trim()
@@ -306,18 +319,24 @@ async function installToolchain(gamePath: string, log: (line: string) => void) {
   if (code !== 0) {
     throw new Error(`Could not install toolchain ${toolchain}:\n${output}`)
   }
+  return toolchain
 }
 
 /**
  * Warns if building the game or the game server would need to compile anything, as checks
  * never build. Runs in the sandbox since Lake executes the game's `lakefile`.
  */
-async function checkFullyBuilt(gamePath: string, status: ImportStatus) {
+async function checkFullyBuilt(
+  gamePath: string,
+  status: ImportStatus,
+): Promise<boolean> {
+  let fullyBuilt = true
   // every check imports `GameServer`, which the game's default targets may not include
   for (const target of [[], ['GameServer']]) {
     const command = ['lake', 'build', '--no-build', ...target]
     const { code, output } = await run(spawnGame(gamePath, command))
     if (code !== 0) {
+      fullyBuilt = false
       const name = target[0] ?? 'the game'
       status.warnings.push(
         `${name} is not fully built. Checks will fail until the artifact contains all build files.`,
@@ -325,7 +344,8 @@ async function checkFullyBuilt(gamePath: string, status: ImportStatus) {
       status.log.push(`\`${command.join(' ')}\` failed:`, output.trim())
     }
   }
-  if (status.warnings.length === 0) status.log.push('The game is fully built.')
+  if (fullyBuilt) status.log.push('The game is fully built.')
+  return fullyBuilt
 }
 
 /** Moves the new game into place, replacing an older version */

@@ -17,6 +17,9 @@ export default defineConfig({
       '/api': {
         target: `http://localhost:${serverPort}`,
       },
+      '/stats': {
+        target: `http://localhost:${serverPort}`,
+      },
     },
   },
 })
