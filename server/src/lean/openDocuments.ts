@@ -20,7 +20,7 @@ export class CheckTimeoutError extends Error {
   }
 }
 
-const CHECK_TIMEOUT_MS = Number(process.env.LEAN_CHECK_TIMEOUT_MS) || 120000
+const CHECK_TIMEOUT_MS = Number(process.env.LEAN_CHECK_TIMEOUT_MS) || 120_000
 
 interface QueuedCheck {
   task: () => Promise<unknown>

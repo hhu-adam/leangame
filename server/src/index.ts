@@ -26,8 +26,12 @@ import {
 } from './import/gameImport.js'
 import { ApiProofCheckInput } from './api.js'
 import { listGameActivity, listImportStats, recordCheck } from './stats.js'
+import { serveClient } from './client.js'
+import { isDevMode } from './utils/devMode.js'
 
-const PORT = process.env.PORT || 8000
+const PORT = Number(process.env.PORT) || 8000
+/** e.g. `127.0.0.1` to only accept connections from a reverse proxy on the same machine */
+const HOST = process.env.HOST
 const app = express()
 app.use(express.json())
 
@@ -202,6 +206,11 @@ app.get('/api/i18n/:owner/:game/:lang', (req, res) => {
   sendJsonFile(res, i18nFilePath(gamePath, req.params.lang))
 })
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`)
-})
+// in development, Vite serves the client
+if (!isDevMode()) serveClient(app)
+
+const onListening = () =>
+  console.log(`Server listening on ${HOST ?? ''}:${PORT}`)
+// without a host, Node listens on all addresses (IPv4 and IPv6)
+if (HOST) app.listen(PORT, HOST, onListening)
+else app.listen(PORT, onListening)

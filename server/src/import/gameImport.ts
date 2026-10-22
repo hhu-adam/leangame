@@ -21,13 +21,13 @@ verifies with `lake build --no-build` that the artifact is fully built and warns
 */
 
 const GITHUB_API_URL = process.env.GITHUB_API_URL || 'https://api.github.com'
-const TOKEN = process.env.LEAN4GAME_GITHUB_TOKEN
-const USER_AGENT = process.env.LEAN4GAME_GITHUB_USER || 'leangame'
+const TOKEN = process.env.LEANGAME_GITHUB_TOKEN
+const USER_AGENT = process.env.LEANGAME_GITHUB_USER || 'leangame'
 const MB = 1024 * 1024
 const MAX_DOWNLOAD_BYTES =
-  (Number(process.env.IMPORT_MAX_DOWNLOAD_MB) || 2048) * MB
+  (Number(process.env.IMPORT_MAX_DOWNLOAD_MB) || 8192) * MB
 const MAX_UNPACKED_BYTES =
-  (Number(process.env.IMPORT_MAX_UNPACKED_MB) || 20480) * MB
+  (Number(process.env.IMPORT_MAX_UNPACKED_MB) || 40960) * MB
 
 /** Temporary files of running imports. Owners can't start with a dot on GitHub. */
 const IMPORT_TMP_DIR = path.join(GAMES_DIR, '.import')
@@ -96,7 +96,7 @@ async function doImport(owner: string, repo: string, status: ImportStatus) {
   const targetPath = importedGamePath(owner, repo)
   if (!targetPath) throw new Error('Invalid repository name')
   if (!TOKEN) {
-    throw new Error('The server has no GitHub token (LEAN4GAME_GITHUB_TOKEN)')
+    throw new Error('The server has no GitHub token')
   }
 
   const artifact = await newestArtifact(owner, repo)
