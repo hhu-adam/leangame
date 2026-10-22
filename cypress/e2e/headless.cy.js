@@ -321,10 +321,15 @@ describe('Server communication', () => {
           difficulty: 0,
         }),
       }).then(async (res) => ({ status: res.status, body: await res.json() }))
+    // parallel requests may reach the server in any order, so the later ones are delayed
+    const after = (ms, tactics) =>
+      new Promise((resolve) => setTimeout(resolve, ms)).then(() =>
+        post(tactics),
+      )
     // `running` keeps Lean busy while the other two arrive
     const running = post(['sleep 3000'])
-    const replaced = post(['rw [g]'])
-    const newest = post(['rw [g]', 'rw [h]'])
+    const replaced = after(300, ['rw [g]'])
+    const newest = after(600, ['rw [g]', 'rw [h]'])
     cy.wrap(Promise.all([running, replaced, newest]), { timeout: 30000 }).then(
       ([running, replaced, newest]) => {
         expect(running.status).to.eq(200)

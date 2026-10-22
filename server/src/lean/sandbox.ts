@@ -24,7 +24,8 @@ export function spawnGame(
     options.push('--ro-bind', lean4GameFolder, '/lean')
   }
   return spawn(
-    path.join(import.meta.dirname, '..', 'scripts', 'bubblewrap.sh'),
+    // outside `src/`, as the build doesn't copy it to `dist/`
+    path.join(import.meta.dirname, '..', '..', 'scripts', 'bubblewrap.sh'),
     [...options, '--', ...command],
   )
 }

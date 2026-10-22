@@ -5,9 +5,42 @@ nginx serves the built client and forwards the API to the Node server.
 
 ## Install bubblewrap (bwrap)
 
-```
+```bash
 sudo apt-get install bubblewrap
 ```
+
+### AppArmor (Ubuntu 24.04 and newer)
+
+bubblewrap creates a user namespace (`--unshare-user`) to build the sandbox without root.
+Since 24.04, Ubuntu only allows this to programs whose AppArmor profile permits it, and the
+`bubblewrap` package doesn't come with one. Without a profile, starting a game fails with an
+error like `bwrap: setting up uid map: Permission denied`.
+
+Add a profile that allows `/usr/bin/bwrap`, and only it, to create user namespaces:
+
+```bash
+sudo tee /etc/apparmor.d/bwrap > /dev/null << 'EOF'
+abi <abi/4.0>,
+include <tunables/global>
+
+profile bwrap /usr/bin/bwrap flags=(unconfined) {
+  userns,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/bwrap>
+}
+EOF
+sudo systemctl reload apparmor
+```
+
+`flags=(unconfined)` adds no further restrictions; `userns,` is the permission that matters.
+Check that the sandbox works:
+
+```bash
+bwrap --unshare-user --ro-bind / / true && echo ok
+```
+
+The CI tests in production mode on Linux set up the same profile.
 
 ## nginx
 
@@ -19,7 +52,7 @@ doesn't need to change when endpoints are added or removed.
 
 Install nginx:
 
-```
+```bash
 sudo apt update
 sudo apt install nginx
 ```
@@ -27,7 +60,7 @@ sudo apt install nginx
 The configuration is in [`deploy/nginx/leangame.conf`](../deploy/nginx/leangame.conf). Adjust
 `server_name` and the certificate paths, then enable it:
 
-```
+```bash
 sudo unlink /etc/nginx/sites-enabled/default
 sudo ln -s /path/to/leangame/deploy/nginx/leangame.conf /etc/nginx/sites-enabled/leangame.conf
 sudo nginx -t
@@ -59,7 +92,7 @@ build is picked up immediately. Unknown paths outside `/api`, `/stats` and `/pin
 
 ## Deploying an update
 
-```
+```bash
 git pull
 npm ci
 npm run build
