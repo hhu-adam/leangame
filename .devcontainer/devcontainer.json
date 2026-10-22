@@ -26,6 +26,11 @@
     "BWRAP_BIND_PROC": "true"
   },
 
+  "remoteEnv": {
+    // don't expose the host's forwarded SSH agent
+    "SSH_AUTH_SOCK": ""
+  },
+
   "remoteUser": "node",
   "containerUser": "node",
 
