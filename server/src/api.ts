@@ -101,7 +101,11 @@ export interface LeanInstance {
   lspReady: Promise<void>
   /** the game as requested by the player, lower case, for the play statistics */
   game: { owner: string; repo: string }
-  /** time of the last check in ms, for the play statistics. Never stored. */
+  /** time in ms of the last start, check or keepalive, instances idle for too long are stopped */
+  lastActivityAt: number
+  /** time in ms when the process exited */
+  exitedAt?: number
+  /** time of the last check in ms, for the play statistics */
   lastCheckAt?: number
 }
 

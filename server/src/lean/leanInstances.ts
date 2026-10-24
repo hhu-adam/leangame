@@ -6,6 +6,10 @@ import { noBwrap, spawnGame } from './sandbox.js'
 
 const instances = new Map<string, LeanInstance>()
 
+/** Instances without a check or keepalive for this long are stopped */
+const IDLE_MS = (Number(process.env.LEAN_IDLE_MINUTES) || 5) * 60_000
+const CLEANUP_INTERVAL_MS = 30_000
+
 export function startInstance(
   gamePath: string,
   /** the game as requested by the player, lower case, for the play statistics */
@@ -44,6 +48,7 @@ export function startInstance(
     status: 'starting',
     startedAt: new Date(),
     exitCode: null,
+    lastActivityAt: Date.now(),
     client,
     lspReady,
     game,
@@ -60,11 +65,13 @@ export function startInstance(
   child.once('exit', (code) => {
     instance.status = 'exited'
     instance.exitCode = code
+    instance.exitedAt ??= Date.now()
     forgetInstanceDocs(instance.id)
   })
 
   child.once('error', (err) => {
     instance.status = 'exited'
+    instance.exitedAt ??= Date.now()
     console.error(`[lean:${instance.id}] failed to start:`, err)
   })
 
@@ -95,6 +102,14 @@ export function countActiveInstances(): ApiGameInstanceCount[] {
   return Array.from(counts.values())
 }
 
+/** Marks the instance as active, returns `false` if it doesn't exist or has exited */
+export function touchInstance(id: string): boolean {
+  const instance = instances.get(id)
+  if (!instance || instance.status === 'exited') return false
+  instance.lastActivityAt = Date.now()
+  return true
+}
+
 export function stopInstance(id: string): boolean {
   const instance = instances.get(id)
   if (!instance) return false
@@ -116,3 +131,19 @@ export function stopGameInstances(gamePath: string): number {
   }
   return stopped
 }
+
+// Stops the instances of players who have left without stopping their instance, e.g. by
+// closing the tab, and forgets instances which have exited a while ago
+setInterval(() => {
+  const now = Date.now()
+  for (const instance of instances.values()) {
+    if (instance.status !== 'exited') {
+      if (now - instance.lastActivityAt > IDLE_MS) {
+        console.log(`[lean:${instance.id}] stopping idle instance`)
+        stopInstance(instance.id)
+      }
+    } else if (now - (instance.exitedAt ?? now) > IDLE_MS) {
+      instances.delete(instance.id)
+    }
+  }
+}, CLEANUP_INTERVAL_MS).unref()

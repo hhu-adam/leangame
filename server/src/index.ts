@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { type Request, type Response } from 'express'
 import {
   gameDataFilePath,
   i18nFilePath,
@@ -17,6 +17,7 @@ import {
   getInstance,
   startInstance,
   stopInstance,
+  touchInstance,
 } from './lean/leanInstances.js'
 import path from 'path'
 import { sendJsonFile } from './utils/response.js'
@@ -97,6 +98,7 @@ app.get('/api/lean/instances/:id', (req, res) => {
   })
 })
 
+// TODO: we might not need this if we have the identical `/stop` below.
 app.delete('/api/lean/instances/:id', (req, res) => {
   const found = stopInstance(req.params.id)
   if (!found) {
@@ -105,6 +107,25 @@ app.delete('/api/lean/instances/:id', (req, res) => {
   }
   const instance = getInstance(req.params.id)!
   res.json({ id: instance.id, status: instance.status })
+})
+
+// same as `DELETE` on `/api/lean/instances/:id`, for convenience
+app.post('/api/lean/instances/:id/stop', (req, res) => {
+  const found = stopInstance(req.params.id)
+  if (!found) {
+    res.status(404).json({ error: 'Instance not found' })
+    return
+  }
+  const instance = getInstance(req.params.id)!
+  res.json({ id: instance.id, status: instance.status })
+})
+
+app.post('/api/lean/instances/:id/keepalive', (req, res) => {
+  if (!touchInstance(req.params.id)) {
+    res.status(404).json({ error: 'Instance not found' })
+    return
+  }
+  res.status(204).end()
 })
 
 app.post('/api/lean/instances/:id/check', async (req, res) => {
@@ -116,6 +137,7 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
     return
   }
   recordCheck(instance, input.language, req.acceptsLanguages())
+  touchInstance(instance.id)
   try {
     const result = await checkProof({ ...input, instance })
     res.json(result)
@@ -132,6 +154,9 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
     res
       .status(500)
       .json({ error: `Failed to check proof: ${(err as Error).message}` })
+  } finally {
+    // a long check must not count as idle time
+    touchInstance(instance.id)
   }
 })
 

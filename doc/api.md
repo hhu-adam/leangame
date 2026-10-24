@@ -5,6 +5,8 @@
 | `/api/lean/start/:owner/:game`               | POST       | starts a lean instance for the specified game                      |
 | `/api/lean/instances/:id`                    | GET/DELETE | get information about an existing instance or delete that instance |
 | `/api/lean/instances/:id/check`              | POST       | submit a proof for a level                                         |
+| `/api/lean/instances/:id/keepalive`          | POST       | keep the instance running                                          |
+| `/api/lean/instances/:id/stop`               | POST       | same as `DELETE` on `/api/lean/instances/:id`                      |
 | `/api/lean/instances/count`                  | GET        | number of active instances per game                                |
 | `/api/import/:owner/:repo/trigger`           | POST       | start importing a game from GitHub                                 |
 | `/api/import/:owner/:repo`                   | GET        | get the status of the import                                       |

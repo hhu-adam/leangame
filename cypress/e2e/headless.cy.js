@@ -54,6 +54,48 @@ describe('Server communication', () => {
       expect(res.body.status).to.eq('running')
     })
   })
+  it('can keep an instance alive', () => {
+    cy.request('POST', `/api/lean/instances/${instanceId}/keepalive`).then(
+      (res) => {
+        expect(res.status).to.eq(204)
+      },
+    )
+  })
+  it('cannot keep an unknown instance alive', () => {
+    cy.request({
+      method: 'POST',
+      url: '/api/lean/instances/00000000-0000-0000-0000-000000000000/keepalive',
+      failOnStatusCode: false,
+    }).then((res) => {
+      expect(res.status).to.eq(404)
+    })
+  })
+  it('can stop an instance with POST', () => {
+    cy.request('POST', '/api/lean/start/test/testgame').then((res) => {
+      const id = res.body.id
+      cy.request('POST', `/api/lean/instances/${id}/stop`).then((res) => {
+        expect(res.status).to.eq(200)
+      })
+      // the instance has exited once its status says so
+      const waitForExit = (attempts) =>
+        cy.request('GET', `/api/lean/instances/${id}`).then((res) => {
+          if (res.body.status !== 'exited' && attempts > 0) {
+            cy.wait(200)
+            waitForExit(attempts - 1)
+          } else {
+            expect(res.body.status).to.eq('exited')
+          }
+        })
+      waitForExit(25)
+      cy.request({
+        method: 'POST',
+        url: `/api/lean/instances/${id}/keepalive`,
+        failOnStatusCode: false,
+      }).then((res) => {
+        expect(res.status).to.eq(404)
+      })
+    })
+  })
   it('can check empty proof', () => {
     checkProof({
       world: 'TestWorld',
