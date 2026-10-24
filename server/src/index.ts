@@ -135,6 +135,14 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
   }
 })
 
+app.get('/api/games', async (_req, res) => {
+  res.json(await listGames())
+})
+
+app.get('/api/load', (_req, res) => {
+  res.json(getServerLoad())
+})
+
 app.post('/api/import/:owner/:repo/trigger', (req, res) => {
   const { owner, repo } = req.params
   if (!isValidRepoName(owner, repo)) {
@@ -151,28 +159,6 @@ app.get('/api/import/:owner/:repo', (req, res) => {
     return
   }
   res.json(status)
-})
-
-app.get('/api/load', (_req, res) => {
-  res.json(getServerLoad())
-})
-
-app.get('/api/games', async (_req, res) => {
-  res.json(await listGames())
-})
-
-app.get('/stats/imports', async (_req, res) => {
-  res.json(await listImportStats())
-})
-
-app.get('/stats/games', (req, res) => {
-  const { from, to } = req.query
-  res.json(
-    listGameActivity(
-      typeof from === 'string' ? from : undefined,
-      typeof to === 'string' ? to : undefined,
-    ),
-  )
 })
 
 app.get('/api/data/:owner/:game/game', (req, res) => {
@@ -215,6 +201,20 @@ app.get('/api/i18n/:owner/:game/:lang', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return
   sendJsonFile(res, i18nFilePath(gamePath, req.params.lang))
+})
+
+app.get('/stats/games', (req, res) => {
+  const { from, to } = req.query
+  res.json(
+    listGameActivity(
+      typeof from === 'string' ? from : undefined,
+      typeof to === 'string' ? to : undefined,
+    ),
+  )
+})
+
+app.get('/stats/imports', async (_req, res) => {
+  res.json(await listImportStats())
 })
 
 // in development, Vite serves the client
