@@ -6,9 +6,6 @@ using the frontend.
 const uuidRegex =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-/** Lean instance shared by all tests in `Server communication`. */
-let instanceId
-
 /** The plain text of tagged code. */
 function flatten(code) {
   if ('text' in code) return code.text
@@ -16,17 +13,117 @@ function flatten(code) {
   return flatten(code.tag[1])
 }
 
-/** Checks a proof on the shared Lean instance. */
-function checkProof(input) {
-  return cy
-    .request('POST', `/api/lean/instances/${instanceId}/check`, input)
-    .then((res) => {
+describe('Data', () => {
+  it('can list featured games', () => {
+    cy.request('GET', '/api/games').then((res) => {
       expect(res.status).to.eq(200)
-      return res.body
+      expect(res.body).to.be.an('array')
+      for (const game of res.body) {
+        expect(game).to.have.all.keys(
+          'owner',
+          'repo',
+          'featured',
+          'tile',
+          'settings',
+        )
+      }
     })
-}
+  })
+  it('can get game info', () => {
+    cy.request('GET', '/api/data/test/testgame/game')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.title).to.eq('Test Game')
+        expect(data.worlds.nodes).to.have.property('TestWorld')
+        expect(data.settings.unbundleHyps).to.eq(false)
+        // TODO: other fields
+      })
+  })
+  it('can get inventory', () => {
+    cy.request('GET', '/api/data/test/testgame/inventory')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.definitions).not.to.eq(null)
+        expect(data.definitions.length).not.to.eq(0)
+        expect(data.tactics).not.to.eq(null)
+        expect(data.tactics.length).not.to.eq(0)
+        expect(data.theorems).not.to.eq(null)
+        expect(data.theorems.length).not.to.eq(0)
+      })
+  })
+  it('can get level info', () => {
+    cy.request('GET', '/api/data/test/testgame/level/TestWorld/1')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.title).to.eq('Test Level')
+      })
+  })
+  it('can get doc item', () => {
+    cy.request('GET', '/api/data/test/testgame/doc/theorem/Nat.add_comm')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data.name).to.eq('Nat.add_comm')
+        expect(data.displayName).to.eq('add_comm')
+      })
+  })
+  it('can get image', () => {
+    cy.request('GET', '/api/data/test/testgame/game')
+      .then((res) => {
+        const image = res.body.worlds.nodes.TestWorld.image
+        expect(image).to.eq('images/cover.png')
+        return cy.request('GET', `/api/data/test/testgame/${image}`)
+      })
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        expect(res.headers['content-type']).to.eq('image/png')
+      })
+  })
+  it('does not serve files outside the images folder', () => {
+    cy.request({
+      url: '/api/data/test/testgame/images/..%2Fgame.json',
+      failOnStatusCode: false,
+    }).then((res) => {
+      expect(res.status).to.eq(404)
+    })
+  })
+  it('can get German language', () => {
+    cy.request('GET', '/api/i18n/test/testgame/de')
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+      .then((data) => {
+        expect(data['Test Level']).to.eq('Testlevel auf Deutsch')
+      })
+  })
+})
 
 describe('Server communication', () => {
+  /** Lean instance shared by all tests in `Server communication`. */
+  let instanceId
+
+  /** Checks a proof on the shared Lean instance. */
+  function checkProof(input) {
+    return cy
+      .request('POST', `/api/lean/instances/${instanceId}/check`, input)
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        return res.body
+      })
+  }
+
   before(() => {
     cy.request('POST', '/api/lean/start/test/testgame').then((res) => {
       expect(res.status).to.eq(201)
@@ -380,103 +477,6 @@ describe('Server communication', () => {
         expect(newest.body.completed).to.eq(true)
       },
     )
-  })
-})
-
-describe('Data', () => {
-  it('can list featured games', () => {
-    cy.request('GET', '/api/games').then((res) => {
-      expect(res.status).to.eq(200)
-      expect(res.body).to.be.an('array')
-      for (const game of res.body) {
-        expect(game).to.have.all.keys(
-          'owner',
-          'repo',
-          'featured',
-          'tile',
-          'settings',
-        )
-      }
-    })
-  })
-  it('can get game info', () => {
-    cy.request('GET', '/api/data/test/testgame/game')
-      .then((res) => {
-        expect(res.status).to.eq(200)
-        return res.body
-      })
-      .then((data) => {
-        expect(data.title).to.eq('Test Game')
-        expect(data.worlds.nodes).to.have.property('TestWorld')
-        expect(data.settings.unbundleHyps).to.eq(false)
-        // TODO: other fields
-      })
-  })
-  it('can get inventory', () => {
-    cy.request('GET', '/api/data/test/testgame/inventory')
-      .then((res) => {
-        expect(res.status).to.eq(200)
-        return res.body
-      })
-      .then((data) => {
-        expect(data.definitions).not.to.eq(null)
-        expect(data.definitions.length).not.to.eq(0)
-        expect(data.tactics).not.to.eq(null)
-        expect(data.tactics.length).not.to.eq(0)
-        expect(data.theorems).not.to.eq(null)
-        expect(data.theorems.length).not.to.eq(0)
-      })
-  })
-  it('can get level info', () => {
-    cy.request('GET', '/api/data/test/testgame/level/TestWorld/1')
-      .then((res) => {
-        expect(res.status).to.eq(200)
-        return res.body
-      })
-      .then((data) => {
-        expect(data.title).to.eq('Test Level')
-      })
-  })
-  it('can get doc item', () => {
-    cy.request('GET', '/api/data/test/testgame/doc/theorem/Nat.add_comm')
-      .then((res) => {
-        expect(res.status).to.eq(200)
-        return res.body
-      })
-      .then((data) => {
-        expect(data.name).to.eq('Nat.add_comm')
-        expect(data.displayName).to.eq('add_comm')
-      })
-  })
-  it('can get image', () => {
-    cy.request('GET', '/api/data/test/testgame/game')
-      .then((res) => {
-        const image = res.body.worlds.nodes.TestWorld.image
-        expect(image).to.eq('images/cover.png')
-        return cy.request('GET', `/api/data/test/testgame/${image}`)
-      })
-      .then((res) => {
-        expect(res.status).to.eq(200)
-        expect(res.headers['content-type']).to.eq('image/png')
-      })
-  })
-  it('does not serve files outside the images folder', () => {
-    cy.request({
-      url: '/api/data/test/testgame/images/..%2Fgame.json',
-      failOnStatusCode: false,
-    }).then((res) => {
-      expect(res.status).to.eq(404)
-    })
-  })
-  it('can get German language', () => {
-    cy.request('GET', '/api/i18n/test/testgame/de')
-      .then((res) => {
-        expect(res.status).to.eq(200)
-        return res.body
-      })
-      .then((data) => {
-        expect(data['Test Level']).to.eq('Testlevel auf Deutsch')
-      })
   })
 })
 
