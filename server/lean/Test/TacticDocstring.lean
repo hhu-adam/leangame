@@ -1,4 +1,5 @@
 /- Modified from Mathlib.Tactic.HelpCmd -/
+
 import Lean
 
 open Lean Meta Elab Tactic Command Expr
@@ -35,7 +36,7 @@ def getTacticDocstring (name: Name) : CommandElabM String := do
   for (k, _) in cat.kinds do
     let mut used := false
     if let some tk := do getHeadTk (← (← env.find? k).value?) then
-      let tk := tk.trim
+      let tk := tk.trimAscii.toString
       if name ≠ tk then -- was `!name.isPrefixOf tk`
         continue
       used := true

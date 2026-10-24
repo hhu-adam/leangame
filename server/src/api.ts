@@ -136,6 +136,14 @@ export interface ApiGameImportStats {
   fullyBuilt: boolean | null
 }
 
+/** How busy the server is, as shares between `0.0` and `1.0` */
+export interface ApiServerLoad {
+  /** used memory, memory the system can reclaim counts as available */
+  memory: number
+  /** CPU usage over the last few seconds, over all cores */
+  cpu: number
+}
+
 /** Number of Lean instances of a game which have not exited */
 export interface ApiGameInstanceCount {
   owner: string

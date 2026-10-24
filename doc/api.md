@@ -8,6 +8,7 @@
 | `/api/lean/instances/count`                  | GET        | number of active instances per game                                |
 | `/api/import/:owner/:repo/trigger`           | POST       | start importing a game from GitHub                                 |
 | `/api/import/:owner/:repo`                   | GET        | get the status of the import                                       |
+| `/api/load`                                  | GET        | server load: used `memory` and `cpu`, both between 0.0 and 1.0     |
 | `/api/games`                                 | GET        | games for the landing page                                         |
 | `/api/data/:owner/:game/game`                | GET        | game info                                                          |
 | `/api/data/:owner/:game/inventory`           | GET        | inventory of the game                                              |

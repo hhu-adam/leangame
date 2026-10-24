@@ -28,6 +28,7 @@ import {
 import { ApiProofCheckInput } from './api.js'
 import { listGameActivity, listImportStats, recordCheck } from './stats.js'
 import { serveClient } from './client.js'
+import { getServerLoad } from './serverLoad.js'
 import { isDevMode } from './utils/devMode.js'
 
 const PORT = Number(process.env.PORT) || 8000
@@ -150,6 +151,10 @@ app.get('/api/import/:owner/:repo', (req, res) => {
     return
   }
   res.json(status)
+})
+
+app.get('/api/load', (_req, res) => {
+  res.json(getServerLoad())
 })
 
 app.get('/api/games', async (_req, res) => {
