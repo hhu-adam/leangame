@@ -14,4 +14,5 @@
 | `/api/data/:owner/:game/inventory`           | GET        | inventory of the game                                              |
 | `/api/data/:owner/:game/level/:world/:level` | GET        | info about a level                                                 |
 | `/api/data/:owner/:game/doc/:kind/:name`     | GET        | doc entry                                                          |
+| `/api/data/:owner/:game/images/*file`        | GET        | image of the game, e.g. `images/cover.png`                         |
 | `/api/i18n/:owner/:game/:lang`               | GET        | translations of the game in specified language                     |

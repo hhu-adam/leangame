@@ -340,6 +340,7 @@ describe('Server communication', () => {
     )
   })
 })
+
 describe('Data', () => {
   it('can list featured games', () => {
     cy.request('GET', '/api/games').then((res) => {
@@ -404,6 +405,26 @@ describe('Data', () => {
         expect(data.name).to.eq('Nat.add_comm')
         expect(data.displayName).to.eq('add_comm')
       })
+  })
+  it('can get image', () => {
+    cy.request('GET', '/api/data/test/testgame/game')
+      .then((res) => {
+        const image = res.body.worlds.nodes.TestWorld.image
+        expect(image).to.eq('images/cover.png')
+        return cy.request('GET', `/api/data/test/testgame/${image}`)
+      })
+      .then((res) => {
+        expect(res.status).to.eq(200)
+        expect(res.headers['content-type']).to.eq('image/png')
+      })
+  })
+  it('does not serve files outside the images folder', () => {
+    cy.request({
+      url: '/api/data/test/testgame/images/..%2Fgame.json',
+      failOnStatusCode: false,
+    }).then((res) => {
+      expect(res.status).to.eq(404)
+    })
   })
   it('can get German language', () => {
     cy.request('GET', '/api/i18n/test/testgame/de')

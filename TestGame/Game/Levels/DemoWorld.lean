@@ -4,6 +4,7 @@ import Game.Levels.DemoWorld.L03_NonProp
 
 World "TestWorld"
 Title "Test World"
+Image "images/cover.png"
 
 Introduction "
 This is the introduction of Test World."

@@ -197,6 +197,17 @@ app.get('/api/data/:owner/:game/doc/:kind/:name', (req, res) => {
   )
 })
 
+app.get('/api/data/:owner/:game/images/*file', (req, res) => {
+  const gamePath = requireGame(req.params.owner, req.params.game, res)
+  if (!gamePath) return
+  // with `root`, `sendFile` refuses paths outside the `images/` folder and only refuses
+  // dotfiles below it, not the `.lake` folder in `root` itself
+  const root = path.join(gamePath, '.lake', 'gamedata', 'images')
+  res.sendFile(req.params.file.join('/'), { root }, (err) => {
+    if (err && !res.headersSent) res.status(404).json({ error: 'Not found' })
+  })
+})
+
 app.get('/api/i18n/:owner/:game/:lang', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return

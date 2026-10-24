@@ -76,7 +76,7 @@ msgstr ""
 msgid "This is additional information about the game."
 msgstr ""
 
-#: Game/Levels/DemoWorld.lean:8
+#: Game/Levels/DemoWorld.lean:9
 msgid "This is the introduction of Test World."
 msgstr ""
 

@@ -13,7 +13,7 @@ This is additional information about the game.
 Languages "English"
 CaptionShort "Test Game"
 CaptionLong "This is a test game."
--- Prerequisites "" -- add this if your game depends on other games
--- CoverImage "images/cover.png"
+Prerequisites "" -- add this if your game depends on other games
+CoverImage "images/cover.png"
 
 MakeGame
