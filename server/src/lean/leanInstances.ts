@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { createLspClient } from './lspClient.js'
-import type { LeanInstance } from '../api.js'
+import type { ApiGameInstanceCount, LeanInstance } from '../api.js'
 import { forgetInstanceDocs } from './openDocuments.js'
 import { noBwrap, spawnGame } from './sandbox.js'
 
@@ -79,6 +79,20 @@ export function getInstance(id: string): LeanInstance | undefined {
 // TODO: this is for debugging only. We should remove it eventually
 export function getAllInstances(): LeanInstance[] {
   return Array.from(instances.values())
+}
+
+/** The number of instances which have not exited, per game */
+export function countActiveInstances(): ApiGameInstanceCount[] {
+  const counts = new Map<string, ApiGameInstanceCount>()
+  for (const instance of instances.values()) {
+    if (instance.status === 'exited') continue
+    const { owner, repo } = instance.game
+    const key = `${owner}/${repo}`
+    const entry = counts.get(key) ?? { owner, repo, count: 0 }
+    entry.count++
+    counts.set(key, entry)
+  }
+  return Array.from(counts.values())
 }
 
 export function stopInstance(id: string): boolean {

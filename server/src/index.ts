@@ -12,6 +12,7 @@ import {
   CheckTimeoutError,
 } from './lean/openDocuments.js'
 import {
+  countActiveInstances,
   getAllInstances,
   getInstance,
   startInstance,
@@ -74,6 +75,11 @@ app.get('/api/lean/instances', (req, res) => {
       exitCode: instance.exitCode,
     })),
   )
+})
+
+// must be registered before '/api/lean/instances/:id'
+app.get('/api/lean/instances/count', (_req, res) => {
+  res.json(countActiveInstances())
 })
 
 app.get('/api/lean/instances/:id', (req, res) => {

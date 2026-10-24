@@ -136,6 +136,13 @@ export interface ApiGameImportStats {
   fullyBuilt: boolean | null
 }
 
+/** Number of Lean instances of a game which have not exited */
+export interface ApiGameInstanceCount {
+  owner: string
+  repo: string
+  count: number
+}
+
 /** Anonymous play statistics of a game in one 30-minute interval */
 export interface ApiGameActivityStats {
   /** start of the interval, UTC, e.g. `"2026-10-22T14:30Z"` */
