@@ -8,4 +8,4 @@ name = "Game"
 
 [[require]]
 name = "GameServer"
-path = "../lean"
+path = "../server/lean"

@@ -9,7 +9,7 @@ import { ApiGameInfo } from './api.js'
 import { readConfig } from './config.js'
 import { subfolders } from './utils/fs.js'
 
-const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', 'TestGame')
+const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', '..', 'TestGame')
 const REPO_PARENT_DIR = path.resolve(import.meta.dirname, '..', '..', '..')
 
 /** The TestGame is only available as `test/testgame` */

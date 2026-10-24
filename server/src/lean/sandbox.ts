@@ -21,7 +21,7 @@ export function spawnGame(
   const options = [gamePath]
   if (includeServerCopy) {
     const lean4GameFolder = path.join(import.meta.dirname, '..', '..', 'lean')
-    options.push('--ro-bind', lean4GameFolder, '/lean')
+    options.push('--ro-bind', lean4GameFolder, '/server/lean')
   }
   return spawn(
     // outside `src/`, as the build doesn't copy it to `dist/`

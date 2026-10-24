@@ -7,7 +7,6 @@
     "build": "tsc",
     "build:lean": "cd lean && lake build",
     "test:lean": "cd lean && lake test",
-    "test:build-game": "cd TestGame && rm -f lake-manifest.json && lake build && lake build GameServer",
     "start": "node dist/index.js"
   },
   "dependencies": {
