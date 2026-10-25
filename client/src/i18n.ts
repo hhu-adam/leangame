@@ -2,6 +2,7 @@ import i18n from 'i18next'
 import Backend from 'i18next-http-backend'
 import { initReactI18next } from 'react-i18next'
 
+import config from './config.json'
 import { de } from './translations/de'
 import { en } from './translations/en'
 import { es } from './translations/es'
@@ -12,8 +13,19 @@ import { uk } from './translations/uk'
 import { zh } from './translations/zh'
 
 /** The language of new visitors, can be set at build time */
-const DEFAULT_LANGUAGE: string =
+export const DEFAULT_LANGUAGE: string =
   import.meta.env.VITE_CLIENT_DEFAULT_LANGUAGE || 'en'
+
+/** The URL parameter for the language, e.g. `?lang=de` */
+export const LANGUAGE_PARAM = 'lang'
+
+/** The language given in the URL, if it is one of the languages of the interface */
+function urlLanguage(): string | undefined {
+  const lng = new URLSearchParams(window.location.search).get(LANGUAGE_PARAM)
+  return config.languages.some(l => l.iso === lng)
+    ? (lng ?? undefined)
+    : undefined
+}
 
 /** Same key as `i18next-browser-languagedetector` uses */
 const LANGUAGE_KEY = 'i18nextLng'
@@ -58,7 +70,8 @@ void i18n
     },
     // > language to use, more information here:
     // > https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
-    lng: savedLanguage() ?? DEFAULT_LANGUAGE,
+    // a link with `?lang=` wins over the saved language, but is not saved itself
+    lng: urlLanguage() ?? savedLanguage() ?? DEFAULT_LANGUAGE,
     // Fallback to English if other translations are missing
     fallbackLng: 'en',
     // > you can use the i18n.changeLanguage function to change the language manually:

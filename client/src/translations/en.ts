@@ -59,4 +59,16 @@ export const en = {
     openLanguageMenu: 'Open language menu',
     closeLanguageMenu: 'Close language menu',
   },
+  preferences: {
+    title: 'Preferences',
+    language: 'Language',
+    languageNote:
+      "If a game does not exist in the selected language, this setting has no effect and the game's default language is used.",
+    useFlags: 'Use country flags to represent languages',
+    layout: 'Layout',
+    layouts: { mobile: 'Mobile', auto: 'Auto', desktop: 'Desktop' },
+    showLockedInventory: 'Show locked inventory items',
+    browserStorage: 'Browser Storage',
+    savePreferences: 'Save my settings (in the browser storage)',
+  },
 } as const

@@ -23,12 +23,12 @@ export function Link({ href, onClick, children, ...props }: LinkProps) {
       return
     }
     event.preventDefault()
-    setLocation(prev => ({
-      ...prev,
-      pathname: href,
-      searchParams: undefined,
-      hash: undefined,
-    }))
+    const url = new URL(href, window.location.href)
+    setLocation({
+      pathname: url.pathname,
+      searchParams: url.searchParams,
+      hash: url.hash,
+    })
   }
 
   return (

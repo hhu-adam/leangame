@@ -62,4 +62,16 @@ export const de: DeepPartialTranslation<typeof en> = {
     openLanguageMenu: 'Sprachmenü öffnen',
     closeLanguageMenu: 'Sprachmenü schließen',
   },
+  preferences: {
+    title: 'Einstellungen',
+    language: 'Sprache',
+    languageNote:
+      'Wenn ein Spiel nicht in der ausgewählten Sprache existiert, dann hat diese Einstellung keine Wirkung und die Standardsprache des Spiels wird verwendet.',
+    useFlags: 'Sprachen durch Flaggen darstellen',
+    layout: 'Seitenlayout',
+    layouts: { mobile: 'Mobil', auto: 'Auto', desktop: 'Desktop' },
+    showLockedInventory: 'Gesperrte Inventar-Einträge anzeigen',
+    browserStorage: 'Browserspeicher',
+    savePreferences: 'Einstellungen im Browser speichern',
+  },
 } as const

@@ -17,7 +17,7 @@ import config from '../config.json'
 import { setLanguage } from '../i18n'
 import { pathSegmentsAtom } from '../state/location'
 import { langNavOpenAtom, navOpenAtom } from '../state/navigation-atoms'
-import { mobileAtom } from '../state/preferences-atoms'
+import { mobileAtom, preferencesAtom } from '../state/preferences-atoms'
 import { Link } from './Link'
 
 // TODO: most buttons have no action yet, they are placeholders for the game pages
@@ -102,7 +102,19 @@ function Dropdown({
   )
 }
 
-/** The flag of the current language, opening the language menu */
+/** The flag of a language if enabled in the preferences, otherwise its ISO code */
+function LanguageIcon({ iso }: { iso: string }) {
+  const { useFlags } = useAtomValue(preferencesAtom)
+  const flag = config.languages.find(l => l.iso === iso)?.flag
+  if (useFlags && flag) return <ReactCountryFlag countryCode={flag} svg />
+  return (
+    <span className="inline-block w-[1.5em] text-center leading-none lowercase">
+      {iso}
+    </span>
+  )
+}
+
+/** The current language, opening the language menu */
 function LanguageButton({
   open,
   onToggle,
@@ -111,14 +123,10 @@ function LanguageButton({
   onToggle: () => void
 }) {
   const { t, i18n } = useTranslation()
-  const flag =
-    config.languages.find(l => l.iso === i18n.resolvedLanguage)?.flag ?? 'GB'
   return (
     <NavButton
       icon={open ? faXmark : undefined}
-      iconElement={
-        open ? undefined : <ReactCountryFlag countryCode={flag} svg />
-      }
+      iconElement={open ? undefined : <LanguageIcon iso={i18n.language} />}
       title={
         open ? t('appBar.closeLanguageMenu') : t('appBar.openLanguageMenu')
       }
@@ -129,10 +137,10 @@ function LanguageButton({
 
 /** All languages to choose from */
 function LanguageMenu() {
-  return config.languages.map(({ iso, name, flag }) => (
+  return config.languages.map(({ iso, name }) => (
     <NavButton
       key={iso}
-      iconElement={<ReactCountryFlag countryCode={flag} svg />}
+      iconElement={<LanguageIcon iso={iso} />}
       text={name}
       title={name}
       onClick={() => setLanguage(iso)}
@@ -161,6 +169,7 @@ function CommonMenuEntries() {
         icon={faGear}
         text={t('appBar.preferences')}
         title={t('appBar.preferences')}
+        href="/preferences"
       />
     </>
   )

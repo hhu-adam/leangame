@@ -2,13 +2,16 @@ import './i18n'
 import { useAtomValue } from 'jotai'
 
 import { AppBar } from './components/AppBar'
+import { useLanguageInUrl } from './hooks/useLanguageInUrl'
 import { ImpressumPage } from './pages/ImpressumPage'
 import { LandingPage } from './pages/LandingPage'
 import { NotFound } from './pages/NotFound'
+import { PreferencesPage } from './pages/PreferencesPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { pathSegmentsAtom } from './state/location'
 
 export function App() {
+  useLanguageInUrl()
   return (
     <>
       <AppBar />
@@ -30,6 +33,8 @@ function Page() {
         return <ImpressumPage />
       case 'privacy':
         return <PrivacyPage />
+      case 'preferences':
+        return <PreferencesPage />
     }
   }
   return <NotFound />
