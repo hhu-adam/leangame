@@ -8,9 +8,17 @@
 
 Reimplementation of lean4game with a better backend.
 
+THIS IS WORK-IN-PROGRESS, NOT READY TO BE USED. Will be combined with leanprover-community/lean4game once it's ready.
+
 ## Security
 
 Providing the use access to a Lean instance running on the server is a severe security risk. That is why we start the Lean server with bubblewrap.
+
+## Contributing
+
+TODO
+
+- [Development Instructions](./doc/development.md)
 
 ## Licencing
 
