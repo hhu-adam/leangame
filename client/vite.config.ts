@@ -1,6 +1,6 @@
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
 const clientPort = process.env.CLIENT_PORT || 3000
 const serverPort = process.env.PORT || 8000
 
@@ -11,15 +11,9 @@ export default defineConfig({
     host: true,
     port: Number(clientPort),
     proxy: {
-      '/ping': {
-        target: `http://localhost:${serverPort}`,
-      },
-      '/api': {
-        target: `http://localhost:${serverPort}`,
-      },
-      '/stats': {
-        target: `http://localhost:${serverPort}`,
-      },
+      '/ping': { target: `http://localhost:${serverPort}` },
+      '/api': { target: `http://localhost:${serverPort}` },
+      '/stats': { target: `http://localhost:${serverPort}` },
     },
   },
 })

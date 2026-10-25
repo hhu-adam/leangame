@@ -8,11 +8,12 @@ export function App() {
     <div>
       <p>{t('helloWorld')}</p>
       <button
-        className="p-2 border rounded-xl border-gray-800 cursor-pointer"
+        className="cursor-pointer rounded-xl border border-gray-800 p-2"
         onClick={() => {
           fetch('/ping')
-            .then((res) => res.text())
-            .then((res) => console.info(res))
+            .then(res => res.text())
+            .then(res => console.info(res))
+            .catch(error => console.error(error))
         }}
       >
         Ping?

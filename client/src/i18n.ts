@@ -11,7 +11,7 @@ import { ko } from './translations/ko'
 import { uk } from './translations/uk'
 import { zh } from './translations/zh'
 
-i18n
+void i18n
   .use(initReactI18next)
   .use(Backend)
   .init({

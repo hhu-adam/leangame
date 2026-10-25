@@ -16,9 +16,9 @@ Providing the use access to a Lean instance running on the server is a severe se
 
 The overall project is licensed under GPLv3 as set out in the file `LICENSE`.
 
-The used images of "Robo" the android are licensed under CC BY 4.0, as set out in `licenses/LICENSE_ROBO_IMAGES_CC_BY`.
+The used images of "Robo", the little android, are licensed under CC BY 4.0, as set out in `licenses/LICENSE_ROBO_IMAGES_CC_BY`.
 See the source repository https://github.com/hhu-adam/Robo-Images for more details about the images.
 
 Further, some Lean snippets have been copied and modified from `lean4`, `batteries`, or `mathlib4` under Apache 2.0 licenses
-of these projects, which are included under `licenses/`. The files with reused code are marked and contain the relevan
+of these projects, which are included under `licenses/`. The files with reused code are marked and contain the relevant
 copyright information.

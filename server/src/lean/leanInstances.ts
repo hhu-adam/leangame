@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import { createLspClient } from './lspClient.js'
+
 import type { ApiGameInstanceCount, LeanInstance } from '../api.js'
+import { createLspClient } from './lspClient.js'
 import { forgetInstanceDocs } from './openDocuments.js'
 import { noBwrap, spawnGame } from './sandbox.js'
 
@@ -31,7 +32,7 @@ export function startInstance(
     .then(() => undefined)
   // the `initialize` request never settles if the process dies, so fail explicitly
   const exited = new Promise<never>((_, reject) =>
-    child.once('exit', (code) =>
+    child.once('exit', code =>
       reject(new Error(`Lean server exited with code ${code}`)),
     ),
   )
@@ -54,7 +55,7 @@ export function startInstance(
     game,
   }
 
-  child.stderr?.on('data', (chunk: Buffer) => {
+  child.stderr.on('data', (chunk: Buffer) => {
     console.error(`[lean:${instance.id}] ${chunk.toString()}`)
   })
 
@@ -62,14 +63,14 @@ export function startInstance(
     instance.status = 'running'
   })
 
-  child.once('exit', (code) => {
+  child.once('exit', code => {
     instance.status = 'exited'
     instance.exitCode = code
     instance.exitedAt ??= Date.now()
     forgetInstanceDocs(instance.id)
   })
 
-  child.once('error', (err) => {
+  child.once('error', err => {
     instance.status = 'exited'
     instance.exitedAt ??= Date.now()
     console.error(`[lean:${instance.id}] failed to start:`, err)

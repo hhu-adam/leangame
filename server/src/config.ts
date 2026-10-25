@@ -32,9 +32,10 @@ export async function readConfig(): Promise<ServerConfig> {
   let content: string
   try {
     content = await fs.readFile(CONFIG_PATH, 'utf-8')
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return DEFAULT_CONFIG
-    throw err
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT')
+      return DEFAULT_CONFIG
+    throw error
   }
   return {
     ...DEFAULT_CONFIG,

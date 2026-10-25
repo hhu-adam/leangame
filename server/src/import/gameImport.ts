@@ -5,9 +5,10 @@ import path from 'node:path'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { ReadableStream as NodeReadableStream } from 'node:stream/web'
+
+import { addImport } from '../database/db.js'
 import { gameDataFilePath } from '../gameData.js'
 import { stopGameInstances } from '../lean/leanInstances.js'
-import { addImport } from '../database/db.js'
 import { spawnGame } from '../lean/sandbox.js'
 import { GAMES_DIR, importedGamePath } from './imported.js'
 
@@ -27,7 +28,7 @@ const MB = 1024 * 1024
 const MAX_DOWNLOAD_BYTES =
   (Number(process.env.IMPORT_MAX_DOWNLOAD_MB) || 8192) * MB
 const MAX_UNPACKED_BYTES =
-  (Number(process.env.IMPORT_MAX_UNPACKED_MB) || 40960) * MB
+  (Number(process.env.IMPORT_MAX_UNPACKED_MB) || 40_960) * MB
 
 /** Temporary files of running imports. Owners can't start with a dot on GitHub. */
 const IMPORT_TMP_DIR = path.join(GAMES_DIR, '.import')
@@ -83,9 +84,9 @@ export function startImport(owner: string, repo: string): ImportStatus {
       status.state = 'done'
       status.log.push('Done!')
     },
-    (err: Error) => {
+    (error: Error) => {
       status.state = 'failed'
-      status.log.push(`Error: ${err.message}`)
+      status.log.push(`Error: ${error.message}`)
     },
   )
   return status
@@ -144,13 +145,7 @@ async function doImport(owner: string, repo: string, status: ImportStatus) {
     if (stopped > 0) log(`Stopped ${stopped} running instance(s) of the game.`)
     await replaceGame(gamePath, targetPath, tmpPath)
     log(`Installed the game in ${path.relative(GAMES_DIR, targetPath)}.`)
-    addImport({
-      owner,
-      repo,
-      artifactId: artifact.id,
-      toolchain,
-      fullyBuilt,
-    })
+    addImport({ owner, repo, artifactId: artifact.id, toolchain, fullyBuilt })
   } finally {
     await fs.rm(tmpPath, { recursive: true, force: true })
   }
@@ -183,7 +178,7 @@ async function newestArtifact(owner: string, repo: string): Promise<Artifact> {
   }
   const { artifacts } = (await res.json()) as { artifacts: Artifact[] }
   const newest = artifacts
-    .filter((artifact) => !artifact.expired)
+    .filter(artifact => !artifact.expired)
     .reduce<Artifact | undefined>(
       (acc, cur) => (!acc || acc.created_at < cur.created_at ? cur : acc),
       undefined,
@@ -370,6 +365,6 @@ function run(
   child.stderr.on('data', (chunk: Buffer) => (output += chunk.toString()))
   return new Promise((resolve, reject) => {
     child.once('error', reject)
-    child.once('close', (code) => resolve({ code, output }))
+    child.once('close', code => resolve({ code, output }))
   })
 }

@@ -1,13 +1,14 @@
+import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { gameDataFilePath } from '../gameData.js'
-import { existsSync } from 'node:fs'
+
 import type {
   ApiProofCheckInput,
   ApiProofCheckResult,
   LeanInstance,
 } from '../api.js'
+import { gameDataFilePath } from '../gameData.js'
 import {
   CheckTimeoutError,
   closeDoc,
@@ -41,7 +42,7 @@ export function checkProof(input: ProofCheck): Promise<ApiProofCheckResult> {
     () => {
       current.timedOut = true
       // stop the elaboration by killing the file worker
-      if (current.uri) closeDoc(input.instance, current.uri, current.doc)
+      if (current.uri) void closeDoc(input.instance, current.uri, current.doc)
     },
   )
 }
@@ -82,7 +83,7 @@ async function checkProofAux(
   const sourcePath = path.join(instance.gamePath, modulePath)
   const originalContent = await fs.readFile(sourcePath, 'utf-8')
 
-  const tacticBlock = tactics.map((tactic) => '  ' + tactic).join('\n')
+  const tacticBlock = tactics.map(tactic => '  ' + tactic).join('\n')
   const inventoryFormatted = '[' + inventory.join('\n') + ']'
   const header =
     'import GameServer\n' +
@@ -130,16 +131,20 @@ async function checkProofAux(
         },
       },
     )
-  } catch (err) {
+  } catch (error) {
     // start over with a fresh file worker on the next check
     await closeDoc(instance, uri, current.doc)
     // the RPC method is missing if the imports (including `GameServer`)
     // could not be loaded. Checks never build them, see `syncDoc`.
-    if ((err as Error).message?.includes("No RPC method 'Game.checkProof'")) {
+    if (
+      error instanceof Error &&
+      error.message.includes("No RPC method 'Game.checkProof'")
+    ) {
       throw new Error(
         'Could not load the imports of the level. Is the game fully built?',
+        { cause: error },
       )
     }
-    throw err
+    throw error
   }
 }

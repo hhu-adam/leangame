@@ -1,9 +1,10 @@
 import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process'
 import path from 'node:path'
+
 import { isDevMode } from '../utils/devMode.js'
 
 /** Without bubblewrap, commands run directly on the host. */
-export const noBwrap = process.env.NO_BWRAP == 'true' || isDevMode()
+export const noBwrap = process.env.NO_BWRAP === 'true' || isDevMode()
 
 /**
  * Runs `command` in the game folder, inside the bubblewrap sandbox unless

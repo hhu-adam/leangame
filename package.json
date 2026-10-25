@@ -1,6 +1,6 @@
 {
-  "name": "client",
-  "version": "0.0.0",
+  "name": "leangame",
+  "version": "0.1.0",
   "private": true,
   "workspaces": [
     "client",
@@ -34,7 +34,8 @@
     "cross-env": "^10.1.0",
     "cypress": "^15.21.0",
     "oxfmt": "^0.72.0",
-    "oxlint": "^1.79.0"
+    "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2005"
   },
   "allowScripts": {
     "esbuild@0.28.2": true,

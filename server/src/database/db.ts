@@ -1,6 +1,8 @@
 import { mkdirSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
+
+import { migrate } from './migration.js'
 import {
   DbInsertGameActivity,
   DbGameActivityRow,
@@ -9,7 +11,6 @@ import {
   DbImportStats,
   DbInsertGameImport,
 } from './models.js'
-import { migrate } from './migration.js'
 
 /**
  * We use a SQLite database which is a single file, `leangame.db`. The motivation is its

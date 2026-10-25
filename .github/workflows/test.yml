@@ -114,6 +114,28 @@ jobs:
           retention-days: 2
           if-no-files-found: ignore
 
+  lint:
+    name: Lint and format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - run: npm ci
+
+      # all rules are warnings, shown as annotations in the PR
+      - name: Lint
+        continue-on-error: true
+        run: npm run lint -- --format=github
+
+      - name: Check formatting
+        continue-on-error: true
+        run: npm run fmt:check
+
   all:
     name: all
     needs: test

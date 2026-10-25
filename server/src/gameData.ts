@@ -1,13 +1,15 @@
-import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import fs from 'node:fs/promises'
 import path from 'node:path'
+
 import type { Response } from 'express'
-import { safeJoin } from './utils/path.js'
-import { isDevMode } from './utils/devMode.js'
-import { importedGamePath, importedGames } from './import/imported.js'
+
 import { ApiGameInfo } from './api.js'
 import { readConfig } from './config.js'
+import { importedGamePath, importedGames } from './import/imported.js'
+import { isDevMode } from './utils/devMode.js'
 import { subfolders } from './utils/fs.js'
+import { safeJoin } from './utils/path.js'
 
 const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', '..', 'TestGame')
 const REPO_PARENT_DIR = path.resolve(import.meta.dirname, '..', '..', '..')
@@ -102,7 +104,7 @@ async function gameInfo(
   if (!filePath) return undefined
   const gameJson = await fs
     .readFile(filePath, 'utf-8')
-    .then((content) => JSON.parse(content))
+    .then(content => JSON.parse(content))
     .catch(() => undefined)
   if (!gameJson) return undefined
   return {

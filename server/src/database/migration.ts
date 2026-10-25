@@ -49,9 +49,9 @@ export function migrate(db: DatabaseSync) {
       db.exec(MIGRATIONS[i])
       db.exec(`PRAGMA user_version = ${i + 1}`)
       db.exec('COMMIT')
-    } catch (err) {
+    } catch (error) {
       db.exec('ROLLBACK')
-      throw err
+      throw error
     }
   }
 }

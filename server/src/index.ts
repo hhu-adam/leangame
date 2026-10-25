@@ -1,4 +1,9 @@
+import path from 'node:path'
+
 import express from 'express'
+
+import { ApiProofCheckInput } from './api.js'
+import { serveClient } from './client.js'
 import {
   gameDataFilePath,
   i18nFilePath,
@@ -6,11 +11,11 @@ import {
   listGames,
   requireGame,
 } from './gameData.js'
-import { checkProof } from './lean/proofCheck.js'
 import {
-  CheckSupersededError,
-  CheckTimeoutError,
-} from './lean/openDocuments.js'
+  getImportStatus,
+  isValidRepoName,
+  startImport,
+} from './import/gameImport.js'
 import {
   countActiveInstances,
   getAllInstances,
@@ -19,18 +24,15 @@ import {
   stopInstance,
   touchInstance,
 } from './lean/leanInstances.js'
-import path from 'path'
-import { sendJsonFile } from './utils/response.js'
 import {
-  getImportStatus,
-  isValidRepoName,
-  startImport,
-} from './import/gameImport.js'
-import { ApiProofCheckInput } from './api.js'
-import { listGameActivity, listImportStats, recordCheck } from './stats.js'
-import { serveClient } from './client.js'
+  CheckSupersededError,
+  CheckTimeoutError,
+} from './lean/openDocuments.js'
+import { checkProof } from './lean/proofCheck.js'
 import { getServerLoad } from './serverLoad.js'
+import { listGameActivity, listImportStats, recordCheck } from './stats.js'
 import { isDevMode } from './utils/devMode.js'
+import { sendJsonFile } from './utils/response.js'
 
 const PORT = Number(process.env.PORT) || 8000
 /** e.g. `127.0.0.1` to only accept connections from a reverse proxy on the same machine */
@@ -58,11 +60,11 @@ app.post('/api/lean/start/:owner/:game', (req, res) => {
       status: instance.status,
       startedAt: instance.startedAt,
     })
-  } catch (err) {
+  } catch (error) {
     // TODO: do not expose error message, write to logs instead
-    res
-      .status(500)
-      .json({ error: `Failed to start Lean server: ${(err as Error).message}` })
+    res.status(500).json({
+      error: `Failed to start Lean server: ${(error as Error).message}`,
+    })
   }
 })
 
@@ -70,7 +72,7 @@ app.post('/api/lean/start/:owner/:game', (req, res) => {
 app.get('/api/lean/instances', (req, res) => {
   const instances = getAllInstances()
   res.json(
-    instances.map((instance) => ({
+    instances.map(instance => ({
       id: instance.id,
       status: instance.status,
       startedAt: instance.startedAt,
@@ -141,19 +143,19 @@ app.post('/api/lean/instances/:id/check', async (req, res) => {
   try {
     const result = await checkProof({ ...input, instance })
     res.json(result)
-  } catch (err) {
-    if (err instanceof CheckSupersededError) {
-      res.status(409).json({ error: err.message })
+  } catch (error) {
+    if (error instanceof CheckSupersededError) {
+      res.status(409).json({ error: error.message })
       return
     }
-    if (err instanceof CheckTimeoutError) {
-      res.status(504).json({ error: err.message })
+    if (error instanceof CheckTimeoutError) {
+      res.status(504).json({ error: error.message })
       return
     }
     // TODO: do not expose error message, write to logs instead
     res
       .status(500)
-      .json({ error: `Failed to check proof: ${(err as Error).message}` })
+      .json({ error: `Failed to check proof: ${(error as Error).message}` })
   } finally {
     // a long check must not count as idle time
     touchInstance(instance.id)
@@ -189,19 +191,22 @@ app.get('/api/import/:owner/:repo', (req, res) => {
 app.get('/api/data/:owner/:game/game', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return
-  sendJsonFile(res, gameDataFilePath(gamePath, 'game.json'))
+  void sendJsonFile(res, gameDataFilePath(gamePath, 'game.json'))
 })
 
 app.get('/api/data/:owner/:game/inventory', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return
-  sendJsonFile(res, path.join(gamePath, '.lake', 'gamedata', 'inventory.json'))
+  void sendJsonFile(
+    res,
+    path.join(gamePath, '.lake', 'gamedata', 'inventory.json'),
+  )
 })
 
 app.get('/api/data/:owner/:game/level/:world/:level', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return
-  sendJsonFile(
+  void sendJsonFile(
     res,
     gameDataFilePath(
       gamePath,
@@ -213,7 +218,7 @@ app.get('/api/data/:owner/:game/level/:world/:level', (req, res) => {
 app.get('/api/data/:owner/:game/doc/:kind/:name', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return
-  sendJsonFile(
+  void sendJsonFile(
     res,
     gameDataFilePath(
       gamePath,
@@ -228,7 +233,7 @@ app.get('/api/data/:owner/:game/images/*file', (req, res) => {
   // with `root`, `sendFile` refuses paths outside the `images/` folder and only refuses
   // dotfiles below it, not the `.lake` folder in `root` itself
   const root = path.join(gamePath, '.lake', 'gamedata', 'images')
-  res.sendFile(req.params.file.join('/'), { root }, (err) => {
+  res.sendFile(req.params.file.join('/'), { root }, err => {
     if (err && !res.headersSent) res.status(404).json({ error: 'Not found' })
   })
 })
@@ -236,7 +241,7 @@ app.get('/api/data/:owner/:game/images/*file', (req, res) => {
 app.get('/api/i18n/:owner/:game/:lang', (req, res) => {
   const gamePath = requireGame(req.params.owner, req.params.game, res)
   if (!gamePath) return
-  sendJsonFile(res, i18nFilePath(gamePath, req.params.lang))
+  void sendJsonFile(res, i18nFilePath(gamePath, req.params.lang))
 })
 
 app.get('/stats/games', (req, res) => {

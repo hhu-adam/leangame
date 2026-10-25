@@ -1,16 +1,17 @@
-import {
-  addGameActivity,
-  getGameActivity,
-  getImportStats,
-} from './database/db.js'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
 import type {
   ApiGameActivityStats,
   ApiGameImportStats,
   LeanInstance,
 } from './api.js'
+import {
+  addGameActivity,
+  getGameActivity,
+  getImportStats,
+} from './database/db.js'
 import { importedGames } from './import/imported.js'
-import path from 'path'
-import fs from 'node:fs/promises'
 
 /**
  * The import statistics of all imported games, featured or not, including games which
@@ -40,7 +41,7 @@ export async function listImportStats(): Promise<ApiGameImportStats[]> {
 async function readToolchain(gamePath: string): Promise<string | null> {
   return fs
     .readFile(path.join(gamePath, 'lean-toolchain'), 'utf-8')
-    .then((content) => content.trim())
+    .then(content => content.trim())
     .catch(() => null)
 }
 
@@ -65,7 +66,7 @@ function normalizeLanguage(language: unknown): string {
  * are not needed for the statistics.
  */
 function preferredLanguage(acceptedLanguages: string[]): string {
-  const first = acceptedLanguages.find((language) => language !== '*')
+  const first = acceptedLanguages.find(language => language !== '*')
   if (!first) return 'unknown'
   const primary = first.split('-')[0]
   return /^[a-z]{2,3}$/i.test(primary) ? primary.toLowerCase() : 'unknown'
@@ -94,9 +95,9 @@ export function recordCheck(
       checks: 1,
       playSeconds: gap !== undefined && gap <= IDLE_MS ? gap / 1000 : 0,
     })
-  } catch (err) {
+  } catch (error) {
     // statistics must never break a check
-    console.error('Could not record the play statistics:', err)
+    console.error('Could not record the play statistics:', error)
   }
 }
 

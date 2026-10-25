@@ -1,4 +1,5 @@
 import os from 'node:os'
+
 import type { ApiServerLoad } from './api.js'
 
 /** How often the CPU usage is sampled */

@@ -1,4 +1,5 @@
-import path from 'path'
+import path from 'node:path'
+
 import { subfolders } from '../utils/fs.js'
 import { safeJoin } from '../utils/path.js'
 

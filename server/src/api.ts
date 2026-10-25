@@ -1,4 +1,5 @@
-import type { ChildProcessWithoutNullStreams } from 'child_process'
+import type { ChildProcessWithoutNullStreams } from 'node:child_process'
+
 import type { LspClient } from './lean/lspClient.js'
 
 /** API input to validate a proof */

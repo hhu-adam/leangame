@@ -1,3 +1,1 @@
-export const en = {
-  helloWorld: 'Hello World',
-} as const
+export const en = { helloWorld: 'Hello World' } as const

@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 
 /**
  * Like `path.join` but ensures the resulting path is inside tha `baseDir` in order

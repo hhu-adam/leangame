@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+
 import type { Response } from 'express'
 
 export async function sendJsonFile(
@@ -12,13 +13,13 @@ export async function sendJsonFile(
   try {
     const content = await fs.readFile(filePath, 'utf-8')
     res.type('application/json').send(content)
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       res.status(404).json({ error: 'Not found' })
     } else {
-      res
-        .status(500)
-        .json({ error: `Failed to read data file: ${(err as Error).message}` })
+      res.status(500).json({
+        error: `Failed to read data file: ${(error as Error).message}`,
+      })
     }
   }
 }
