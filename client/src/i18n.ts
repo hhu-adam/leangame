@@ -11,6 +11,10 @@ import { ko } from './translations/ko'
 import { uk } from './translations/uk'
 import { zh } from './translations/zh'
 
+/** The language of new visitors, can be set at build time */
+const DEFAULT_LANGUAGE: string =
+  import.meta.env.VITE_CLIENT_DEFAULT_LANGUAGE || 'en'
+
 /** Same key as `i18next-browser-languagedetector` uses */
 const LANGUAGE_KEY = 'i18nextLng'
 
@@ -24,13 +28,15 @@ function savedLanguage(): string | undefined {
   }
 }
 
-i18n.on('languageChanged', lng => {
+/** Switches to the language `lng` and remembers it in the browser */
+export function setLanguage(lng: string) {
+  void i18n.changeLanguage(lng)
   try {
     localStorage.setItem(LANGUAGE_KEY, lng)
   } catch {
     // the language is just not remembered
   }
-})
+}
 
 void i18n
   .use(initReactI18next)
@@ -52,7 +58,7 @@ void i18n
     },
     // > language to use, more information here:
     // > https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
-    lng: savedLanguage() ?? 'en',
+    lng: savedLanguage() ?? DEFAULT_LANGUAGE,
     // Fallback to English if other translations are missing
     fallbackLng: 'en',
     // > you can use the i18n.changeLanguage function to change the language manually:

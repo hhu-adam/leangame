@@ -11,6 +11,9 @@
     "font:subset": ". scripts/.python/bin/activate && scripts/subset-font.sh"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.3.1",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
+    "@fortawesome/react-fontawesome": "^3.5.0",
     "@mui/material": "^9.5.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/query-core": "^5.104.5",

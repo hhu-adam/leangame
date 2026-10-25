@@ -25,6 +25,8 @@
   --font-sans: 'Roboto Slab', serif;
   --font-mono: 'Noto Color Emoji Subset', 'JuliaMono', monospace;
 
+  --color-primary: #1070b0;
+
   /* error messages, e.g. `border-error bg-error-bg` */
   --color-error: #d8000c;
   --color-error-bg: #ffbaba;

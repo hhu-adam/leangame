@@ -20,12 +20,12 @@ export function LegalPage({
     lng !== 'en' &&
     i18n.getResource(lng, 'translation', 'legal.englishBelow') !== undefined
   return (
-    <div className="flex-col gap-4 p-8 text-left mx-auto w-full max-w-3xl">
+    <div className="mx-auto flex-col w-full max-w-3xl gap-4 p-8 text-left">
       {isTranslated && (
         <>
           <p className="italic">{t('legal.englishBelow')}</p>
           <Content lng={lng} />
-          <hr className="w-full my-4 border-(--border)" />
+          <hr className="my-4 w-full border-(--border)" />
         </>
       )}
       <Content lng="en" />

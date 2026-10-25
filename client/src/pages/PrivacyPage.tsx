@@ -12,7 +12,7 @@ function PrivacyPolicy({ lng }: { lng: string }) {
   const { t } = useTranslation(undefined, { lng })
   const serverLocation = useAtomValue(legalAtom).data?.privacy?.serverLocation
   return (
-    <div className='max-w-3xl'>
+    <div className="max-w-3xl">
       <h2>{t('privacy.title')}</h2>
       <p>{t('privacy.collectedData')}</p>
       <p>{t('privacy.browserStorage')}</p>

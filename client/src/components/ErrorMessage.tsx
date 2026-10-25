@@ -15,7 +15,7 @@ const thoughtBubbles = [
  */
 export function ErrorMessage({ children }: { children: ReactNode }) {
   return (
-    <div className="flex-col h-svh items-center">
+    <div className="flex-col h-full items-center">
       <div className="relative m-8 flex-col max-h-1/3 max-w-160 rounded-2xl border-2 border-error bg-error-bg text-gray-900">
         <div className="min-h-0 overflow-y-auto p-4">{children}</div>
         {thoughtBubbles.map(classes => (
