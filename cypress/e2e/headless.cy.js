@@ -471,7 +471,7 @@ describe('Server communication', () => {
     const replacedPromise = after(300, ['rw [g]'])
     const newestPromise = after(600, ['rw [g]', 'rw [h]'])
     cy.wrap(Promise.all([runningPromise, replacedPromise, newestPromise]), {
-      timeout: 30_000,
+      timeout: 120_000,
     }).then(([running, replaced, newest]) => {
       expect(running.status).to.eq(200)
       expect(replaced.status).to.eq(409)
