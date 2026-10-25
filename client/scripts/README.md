@@ -5,7 +5,7 @@
 To run the scripts, you once need to set up a local python virtual environment `scripts/.python/` with the requirements from `scripts/requirements.txt`:
 
 ```
-cd scripts
+cd client/scripts
 python -m venv .python
 source .python/bin/activate
 pip install -r requirements.txt
@@ -31,8 +31,4 @@ only containing the glyphs specified in the script `scripts/subset-font.sh`.
 
 1. Add the glyphs to `subset` in `scripts/subset-font.sh`. Make sure not to include hidden variant-selectors when copy-pasting emojis.
 2. Run `npm run font:subset`
-3. Commit the updated `src/fonts/NotoColorEmoji-Subset.woff2`
-
-### Requirements
-
-The original font file must exist at `src/fonts/NotoColorEmoji-Regular.ttf`. If missing, download it from [Google Fonts](https://fonts.google.com/noto/specimen/Noto+Color+Emoji).
+3. Commit the updated `src/assets/fonts/NotoColorEmoji-Subset.woff2`

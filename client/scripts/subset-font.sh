@@ -2,8 +2,8 @@
 
 cd "$(dirname "$0")"
 
-original_font="../src/fonts/NotoColorEmoji-Regular.ttf"
-subset_font="../src/fonts/NotoColorEmoji-Subset.woff2"
+original_font="../src/assets/fonts/NotoColorEmoji-Regular.ttf"
+subset_font="../src/assets/fonts/NotoColorEmoji-Subset.woff2"
 
 # set of glyphs which should be displayed as emojis
 subset="🎉❌✅💥🎭⏳🟡💡🐙🔍🏁"

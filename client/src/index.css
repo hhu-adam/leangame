@@ -2,21 +2,21 @@
 
 @font-face {
   font-family: 'Roboto Slab';
-  src: url('./fonts/RobotoSlab.woff2') format('woff2');
+  src: url('./assets/fonts/RobotoSlab.woff2') format('woff2');
   font-weight: 100 900;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'JuliaMono';
-  src: url('./fonts/JuliaMono-Regular.ttf') format('truetype');
+  src: url('./assets/fonts/JuliaMono-Regular.ttf') format('truetype');
   font-display: swap;
 }
 
 /* only contains the emojis listed in `scripts/subset-font.sh` */
 @font-face {
   font-family: 'Noto Color Emoji Subset';
-  src: url('./fonts/NotoColorEmoji-Subset.woff2') format('woff2');
+  src: url('./assets/fonts/NotoColorEmoji-Subset.woff2') format('woff2');
   font-display: swap;
 }
 
@@ -24,6 +24,16 @@
 @theme {
   --font-sans: 'Roboto Slab', serif;
   --font-mono: 'Noto Color Emoji Subset', 'JuliaMono', monospace;
+
+  /* error messages, e.g. `border-error bg-error-bg` */
+  --color-error: #d8000c;
+  --color-error-bg: #ffbaba;
+}
+
+/* `flex-col` implies `flex`, so `flex flex-col` can be shortened to `flex-col` */
+@utility flex-col {
+  display: flex;
+  flex-direction: column;
 }
 
 :root {
@@ -43,7 +53,7 @@
   --heading: var(--font-sans);
   --mono: var(--font-mono);
 
-  font: 18px/145% var(--sans);
+  font: 18px/1.45 var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
@@ -79,12 +89,10 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  width: 100svw;
+  height: 100svh;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -103,6 +111,7 @@ h2 {
 
 h1 {
   font-size: 56px;
+  line-height: 1.1;
   letter-spacing: -1.68px;
   margin: 32px 0;
   @media (max-width: 1024px) {
