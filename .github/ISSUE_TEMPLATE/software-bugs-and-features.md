@@ -11,5 +11,5 @@ Please use this form only to report issues regarding the leangame software, not 
 
     https://adam-dev.math.hhu.de/
 
-In case of a server outage, please also email us at adam@math.hhu.de.
+In case of a server outage of security issues, please also email us at adam@math.hhu.de.
 -->
