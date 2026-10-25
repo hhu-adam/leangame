@@ -1,11 +1,13 @@
 import Game.Metadata
 
-World "TestWorld"
+World "HelloWorld"
 Level 1
 
-Title "Test Level"
+Title "Hello Level"
 
-Introduction "This is a test level. There can be $\\textbf{LaTeX}$"
+Introduction "This text is shown as first message when the level is played.
+You can insert hints in the proof below. They will appear in this side panel
+depending on the proof a user provides. There can be $\\textbf{LaTeX}$"
 
 variable (x y : Nat)
 
@@ -21,18 +23,6 @@ Statement (h : x = 2) (g: y = 4) : x + x = y := by
   rw [g]
 
 Conclusion "This last message appears if the level is solved."
-
-/-- The way to proof reflexivity. -/
-TacticDoc rfl
-
-/-- Commutativity on `ℕ` -/
-TheoremDoc Nat.add_comm as "add_comm" in "ℕ"
-
-/-- An equality -/
-DefinitionDoc Eq as "equality" in "=="
-
-/-- Addition -/
-DefinitionDoc Add as "+"
 
 NewDefinition Eq Add
 NewTactic rw rfl

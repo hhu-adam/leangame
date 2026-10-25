@@ -23,14 +23,23 @@ dist-ssr
 *.sln
 *.sw?
 
+# For example from `lake exe graph out.pdf`
+*.pdf
+
 # Lean
 **/.lake
+**/.i18n/**/*.mo
 
 # Locally fetched games
 /server/games
 
 # Database
 /server/data
+
+# The lake-manifest of the game skeleton contains links to
+# the local GameServer, therefore it must not be included
+# in the template game used to create a new game
+/GameSkeleton/lake-manifest.json
 
 # Cypress
 cypress/screenshots

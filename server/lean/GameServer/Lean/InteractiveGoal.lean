@@ -137,7 +137,9 @@ def goalToInteractive (mvarId : MVarId) : MetaM InteractiveGoal := do
         continue
       else
         match localDecl with
-        | LocalDecl.cdecl _index fvarId varName type _ _ =>
+        -- the value of a non-dependent `let` (e.g. from `have`) may refer to cleared hypotheses
+        | LocalDecl.cdecl _index fvarId varName type ..
+        | LocalDecl.ldecl _index fvarId varName type (nondep := true) .. =>
           let varName := toString varName
           let type ← instantiateMVars type
           if prevType? == none || prevType? == some type then
@@ -146,7 +148,7 @@ def goalToInteractive (mvarId : MVarId) : MetaM InteractiveGoal := do
             hyps ← pushPending varNames prevType? hyps
             varNames := #[(varName, fvarId)]
           prevType? := some type
-        | LocalDecl.ldecl _index fvarId varName type val _ _ => do
+        | LocalDecl.ldecl _index fvarId varName type val (nondep := false) .. => do
           let varName := toString varName
           hyps ← pushPending varNames prevType? hyps
           let type ← instantiateMVars type

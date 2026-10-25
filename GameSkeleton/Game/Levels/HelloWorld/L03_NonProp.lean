@@ -1,6 +1,6 @@
 import Game.Metadata
 
-World "TestWorld"
+World "HelloWorld"
 Level 3
 
 Title "Non-Prop-Valued"

@@ -11,7 +11,7 @@ import { isDevMode } from './utils/devMode.js'
 import { subfolders } from './utils/fs.js'
 import { safeJoin } from './utils/path.js'
 
-const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', '..', 'TestGame')
+const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', '..', 'GameSkeleton')
 const REPO_PARENT_DIR = path.resolve(import.meta.dirname, '..', '..', '..')
 
 /** The TestGame is only available as `test/testgame` */

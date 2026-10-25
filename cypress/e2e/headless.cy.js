@@ -36,8 +36,8 @@ describe('Data', () => {
         return res.body
       })
       .then(data => {
-        expect(data.title).to.eq('Test Game')
-        expect(data.worlds.nodes).to.have.property('TestWorld')
+        expect(data.title).to.eq('Game Skeleton')
+        expect(data.worlds.nodes).to.have.property('HelloWorld')
         expect(data.settings.unbundleHyps).to.eq(false)
         // TODO: other fields
       })
@@ -58,13 +58,13 @@ describe('Data', () => {
       })
   })
   it('can get level info', () => {
-    cy.request('GET', '/api/data/test/testgame/level/TestWorld/1')
+    cy.request('GET', '/api/data/test/testgame/level/HelloWorld/1')
       .then(res => {
         expect(res.status).to.eq(200)
         return res.body
       })
       .then(data => {
-        expect(data.title).to.eq('Test Level')
+        expect(data.title).to.eq('Hello Level')
       })
   })
   it('can get doc item', () => {
@@ -81,7 +81,7 @@ describe('Data', () => {
   it('can get image', () => {
     cy.request('GET', '/api/data/test/testgame/game')
       .then(res => {
-        const image = res.body.worlds.nodes.TestWorld.image
+        const image = res.body.worlds.nodes.HelloWorld.image
         expect(image).to.eq('images/cover.png')
         return cy.request('GET', `/api/data/test/testgame/${image}`)
       })
@@ -105,7 +105,7 @@ describe('Data', () => {
         return res.body
       })
       .then(data => {
-        expect(data['Test Level']).to.eq('Testlevel auf Deutsch')
+        expect(data['Hello Level']).to.eq('Hallo-Level auf Deutsch')
       })
   })
 })
@@ -195,7 +195,7 @@ describe('Server communication', () => {
   })
   it('can check empty proof', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: [],
       inventory: [],
@@ -214,7 +214,7 @@ describe('Server communication', () => {
   })
   it('returns hypotheses and hints', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: [],
       inventory: [],
@@ -236,7 +236,7 @@ describe('Server communication', () => {
   })
   it('can check complete proof', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'rw [h]'],
       inventory: [],
@@ -258,7 +258,7 @@ describe('Server communication', () => {
   })
   it('reports errors at the failing step', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'rw [g]'],
       inventory: [],
@@ -274,7 +274,7 @@ describe('Server communication', () => {
   })
   it('completes with warnings when using sorry', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'sorry'],
       inventory: [],
@@ -291,14 +291,14 @@ describe('Server communication', () => {
   })
   it('does not keep diagnostics from a previous check', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'rw [g]'],
       inventory: [],
       difficulty: 0,
     }).then(({ completed }) => expect(completed).to.eq(false))
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'rw [h]'],
       inventory: [],
@@ -312,14 +312,14 @@ describe('Server communication', () => {
   })
   it('can check a shorter proof after a longer one', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'rw [h]'],
       inventory: [],
       difficulty: 0,
     }).then(({ steps }) => expect(steps).to.have.length(3))
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: [],
       inventory: [],
@@ -332,7 +332,7 @@ describe('Server communication', () => {
   })
   it('returns the same result when checking the same proof twice', () => {
     const input = {
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]'],
       inventory: [],
@@ -346,7 +346,7 @@ describe('Server communication', () => {
   })
   it('can switch between levels', () => {
     const level1 = {
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['rw [g]', 'rw [h]'],
       inventory: [],
@@ -354,7 +354,7 @@ describe('Server communication', () => {
     }
     checkProof(level1).then(({ completed }) => expect(completed).to.eq(true))
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 2,
       tactics: ['rw [h]'],
       inventory: [],
@@ -364,7 +364,7 @@ describe('Server communication', () => {
   })
   it('returns no hover information unless requested', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: [],
       inventory: [],
@@ -379,7 +379,7 @@ describe('Server communication', () => {
   })
   it('returns hover information', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: [],
       inventory: [],
@@ -409,7 +409,7 @@ describe('Server communication', () => {
   })
   it('shares hover information between steps', () => {
     checkProof({
-      world: 'TestWorld',
+      world: 'HelloWorld',
       level: 1,
       tactics: ['replace h := h.symm'],
       inventory: [],
@@ -424,6 +424,8 @@ describe('Server communication', () => {
       expect(before.tag[0]).not.to.eq(after.tag[0])
       expect(hovers[before.tag[0]].expr).to.eq('@Eq Nat x 2')
       expect(hovers[after.tag[0]].expr).to.eq('@Eq Nat 2 x')
+      // `replace` creates a non-dependent `let` whose value isn't shown
+      expect(hypH(1).value).not.to.exist
       // ... while the unchanged goal is shared
       expect(steps[1].goals[0].typeWithHover).to.deep.eq(
         steps[0].goals[0].typeWithHover,
@@ -454,7 +456,7 @@ describe('Server communication', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          world: 'TestWorld',
+          world: 'HelloWorld',
           level: 1,
           tactics,
           inventory: [],
@@ -500,7 +502,7 @@ describe('Statistics', () => {
       url: `/api/lean/instances/${statsInstanceId}/check`,
       headers: { 'Accept-Language': 'fr-CH,fr;q=0.9,en;q=0.8' },
       body: {
-        world: 'TestWorld',
+        world: 'HelloWorld',
         level: 1,
         tactics: ['rw [g]'],
         inventory: [],

@@ -13,7 +13,7 @@ export const noBwrap = process.env.NO_BWRAP === 'true' || isDevMode()
 export function spawnGame(
   gamePath: string,
   command: string[],
-  /** The TestGame doesn't have its own copy of the server and needs leangame as a local dependency */
+  /** The GameSkeleton doesn't have its own copy of the server and needs leangame as a local dependency */
   includeServerCopy?: boolean,
 ): ChildProcessWithoutNullStreams {
   if (noBwrap) {

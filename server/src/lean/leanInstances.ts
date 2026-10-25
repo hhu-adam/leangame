@@ -15,7 +15,7 @@ export function startInstance(
   gamePath: string,
   /** the game as requested by the player, lower case, for the play statistics */
   game: { owner: string; repo: string },
-  /** The TestGame doesn't have its own copy of the server and needs leangame as a local dependency */
+  /** The GameSkeleton doesn't have its own copy of the server and needs leangame as a local dependency */
   includeServerCopy?: boolean,
 ): LeanInstance {
   const child = spawnGame(gamePath, ['lake', 'serve', '--'], includeServerCopy)
