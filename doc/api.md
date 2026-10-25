@@ -12,6 +12,7 @@
 | `/api/import/:owner/:repo`                   | GET        | get the status of the import                                       |
 | `/api/load`                                  | GET        | server load: used `memory` and `cpu`, both between 0.0 and 1.0     |
 | `/api/games`                                 | GET        | games for the landing page                                         |
+| `/api/legal`                                 | GET        | contact information and legal texts from the server config         |
 | `/api/data/:owner/:game/game`                | GET        | game info                                                          |
 | `/api/data/:owner/:game/inventory`           | GET        | inventory of the game                                              |
 | `/api/data/:owner/:game/level/:world/:level` | GET        | info about a level                                                 |

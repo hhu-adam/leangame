@@ -11,6 +11,27 @@ import { ko } from './translations/ko'
 import { uk } from './translations/uk'
 import { zh } from './translations/zh'
 
+/** Same key as `i18next-browser-languagedetector` uses */
+const LANGUAGE_KEY = 'i18nextLng'
+
+/** The language saved in the browser, if any */
+function savedLanguage(): string | undefined {
+  try {
+    return localStorage.getItem(LANGUAGE_KEY) ?? undefined
+  } catch {
+    // storage can be blocked by the browser
+    return undefined
+  }
+}
+
+i18n.on('languageChanged', lng => {
+  try {
+    localStorage.setItem(LANGUAGE_KEY, lng)
+  } catch {
+    // the language is just not remembered
+  }
+})
+
 void i18n
   .use(initReactI18next)
   .use(Backend)
@@ -31,7 +52,7 @@ void i18n
     },
     // > language to use, more information here:
     // > https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
-    lng: 'en',
+    lng: savedLanguage() ?? 'en',
     // Fallback to English if other translations are missing
     fallbackLng: 'en',
     // > you can use the i18n.changeLanguage function to change the language manually:
