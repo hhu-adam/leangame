@@ -1,5 +1,31 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('./fonts/RobotoSlab.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JuliaMono';
+  src: url('./fonts/JuliaMono-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* only contains the emojis listed in `scripts/subset-font.sh` */
+@font-face {
+  font-family: 'Noto Color Emoji Subset';
+  src: url('./fonts/NotoColorEmoji-Subset.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* used by tailwind's preflight and the `font-sans`/`font-mono` utilities */
+@theme {
+  --font-sans: 'Roboto Slab', serif;
+  --font-mono: 'Noto Color Emoji Subset', 'JuliaMono', monospace;
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -13,9 +39,9 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --sans: var(--font-sans);
+  --heading: var(--font-sans);
+  --mono: var(--font-mono);
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;

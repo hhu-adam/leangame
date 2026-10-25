@@ -7,16 +7,28 @@
     "analyse": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npx vite-bundle-analyzer",
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "font:subset": ". scripts/.python/bin/activate && scripts/subset-font.sh"
   },
   "dependencies": {
+    "@mui/material": "^9.5.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/query-core": "^5.104.5",
     "i18next": "^26.4.0",
     "i18next-http-backend": "^4.0.1",
     "jotai": "^2.20.3",
+    "jotai-effect": "^2.4.2",
+    "jotai-location": "^0.6.2",
+    "jotai-tanstack-query": "^0.11.0",
     "react": "^19.2.8",
+    "react-country-flag": "^3.1.0",
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.12",
+    "react-markdown": "^10.1.0",
+    "react-split": "^2.0.14",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {

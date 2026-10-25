@@ -41,6 +41,9 @@ dist-ssr
 # in the template game used to create a new game
 /GameSkeleton/lake-manifest.json
 
+# Python virtual environment for `client/scripts`
+client/scripts/.python
+
 # Cypress
 cypress/screenshots
 
