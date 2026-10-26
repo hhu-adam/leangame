@@ -72,6 +72,14 @@ export const en = {
     browserStorage: 'Browser Storage',
     savePreferences: 'Save my settings (in the browser storage)',
   },
+  layout: {
+    openPanel: 'Open {{title}}',
+    closePanel: 'Close {{title}}',
+  },
+  game: {
+    introduction: 'Introduction',
+    inventory: 'Inventory',
+  },
   landing: {
     title: 'Lean Game Server',
     subtitle:

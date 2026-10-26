@@ -17,8 +17,8 @@ export function LandingPage() {
         className="flex-col gap-4 bg-[linear-gradient(180deg,var(--color-primary)_0%,rgba(0,212,255,1)_100%)] bg-size-[100%_100%] bg-center bg-no-repeat px-4 py-12 text-white"
         // style={{ backgroundImage: `url(${bgImage})` }}
       >
-        <h1 className="m-0! text-white!">{t('landing.title')}</h1>
-        <p className="mx-auto! w-full max-w-3xl text-center font-bold">
+        <h1 className="m-0 text-white">{t('landing.title')}</h1>
+        <p className="mx-auto w-full max-w-3xl text-center font-bold">
           <Trans
             i18nKey="landing.subtitle"
             components={{

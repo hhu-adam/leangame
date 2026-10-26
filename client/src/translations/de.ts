@@ -75,6 +75,14 @@ export const de: DeepPartialTranslation<typeof en> = {
     browserStorage: 'Browserspeicher',
     savePreferences: 'Einstellungen im Browser speichern',
   },
+  layout: {
+    openPanel: '{{title}} öffnen',
+    closePanel: '{{title}} schließen',
+  },
+  game: {
+    introduction: 'Einführung',
+    inventory: 'Inventar',
+  },
   landing: {
     title: 'Lean-Lern-Spiel-Server',
     subtitle:

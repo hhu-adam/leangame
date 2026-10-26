@@ -1,10 +1,11 @@
 import './i18n'
 import { useAtomValue } from 'jotai'
 
-import { AppBar } from './components/AppBar'
 import { NotFound } from './ErrorPage/NotFound'
 import { useLanguageInUrl } from './hooks/useLanguageInUrl'
 import { LandingPage } from './LandingPage/LandingPage'
+import { AppBar } from './Navigation/AppBar'
+import { GamePage } from './pages/GamePage'
 import { ImpressumPage } from './pages/ImpressumPage'
 import { PreferencesPage } from './pages/PreferencesPage'
 import { PrivacyPage } from './pages/PrivacyPage'
@@ -37,5 +38,6 @@ function Page() {
         return <PreferencesPage />
     }
   }
+  if (segments.length === 2) return <GamePage />
   return <NotFound />
 }
