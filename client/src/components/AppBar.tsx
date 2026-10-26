@@ -50,7 +50,9 @@ function NavButton({
   className,
 }: NavButtonProps) {
   const classes = twMerge(
-    'inline-flex cursor-pointer items-center gap-2 text-inherit no-underline rounded px-3 py-2 whitespace-nowrap hover:bg-white/15 disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent',
+    'inline-flex cursor-pointer items-center gap-2 text-inherit',
+    'no-underline rounded px-3 py-2 whitespace-nowrap hover:bg-white/15',
+    'disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent',
     className,
   )
   const content = (
@@ -114,10 +116,11 @@ function Dropdown({
 }) {
   if (!open) return null
   return (
-    // every click inside, e.g. on a menu entry, closes the dropdown
+    // every click inside, e.g. on a menu entry, closes the dropdown.
+    // The `%` in `max-h` is the height of the app bar, so the dropdown ends at the window's bottom.
     // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
-      className="absolute top-full right-0 z-10 flex-col rounded-bl-lg bg-primary py-1 shadow-lg *:justify-start *:rounded-none"
+      className="absolute top-full right-0 z-10 flex-col max-h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain rounded-bl-lg bg-primary py-1 shadow-lg *:justify-start *:rounded-none"
       onClick={onClose}
     >
       {children}
@@ -136,8 +139,15 @@ function LanguageButton({
   const { t, i18n } = useTranslation()
   return (
     <NavButton
-      icon={open ? faXmark : undefined}
-      iconElement={open ? undefined : <LanguageIcon iso={i18n.language} />}
+      iconElement={
+        <span className="inline-flex w-6 justify-center">
+          {open ? (
+            <FontAwesomeIcon icon={faXmark} />
+          ) : (
+            <LanguageIcon iso={i18n.language} />
+          )}
+        </span>
+      }
       title={
         open ? t('appBar.closeLanguageMenu') : t('appBar.openLanguageMenu')
       }

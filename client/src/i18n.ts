@@ -9,6 +9,7 @@ import { es } from './translations/es'
 import { fr } from './translations/fr'
 import { it } from './translations/it'
 import { ko } from './translations/ko'
+import { ru } from './translations/ru'
 import { uk } from './translations/uk'
 import { zh } from './translations/zh'
 
@@ -93,6 +94,7 @@ void i18n
       fr: { translation: fr },
       it: { translation: it },
       ko: { translation: ko },
+      ru: { translation: ru },
       uk: { translation: uk },
       zh: { translation: zh },
     },

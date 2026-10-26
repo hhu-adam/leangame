@@ -5,7 +5,6 @@ import { twMerge } from 'tailwind-merge'
 import config from '../config.json'
 import { preferencesAtom } from '../state/preferences-atoms'
 
-/** The flag of a language if enabled in the preferences, otherwise its ISO code */
 export function LanguageIcon({
   iso,
   title,
@@ -13,17 +12,25 @@ export function LanguageIcon({
 }: {
   iso: string
   title?: string
-  /** for the ISO code, e.g. to remove its fixed width */
   className?: string
 }) {
   const { useFlags } = useAtomValue(preferencesAtom)
-  const flag = config.languages.find(l => l.iso === iso)?.flag
+  const language = config.languages.find(l => l.iso === iso)
+  const flag = language?.flag
+  title ??= language?.name ?? iso
   if (useFlags && flag)
-    return <ReactCountryFlag countryCode={flag} svg title={title} />
+    return (
+      <ReactCountryFlag
+        countryCode={flag}
+        svg
+        title={title}
+        className={twMerge('min-w-6', className)}
+      />
+    )
   return (
     <span
       className={twMerge(
-        'inline-block w-[1.5em] text-center leading-none lowercase',
+        'inline-block w-6 text-center leading-none lowercase',
         className,
       )}
       title={title}

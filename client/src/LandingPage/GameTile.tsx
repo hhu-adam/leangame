@@ -4,7 +4,6 @@ import type { ApiGameInfo } from '../api'
 import { LanguageIcon } from '../components/LanguageIcon'
 import { Link } from '../components/Link'
 import { Markdown } from '../components/Markdown'
-import config from '../config.json'
 import { useGameTranslation } from '../utils/translation'
 
 /**
@@ -27,7 +26,7 @@ export function GameTile({
   return (
     <article className="relative flex-col flex w-full max-w-125 cursor-pointer justify-between justify-self-center rounded-[20px] border border-[rgb(140,140,140)] text-left text-[16px] leading-normal tracking-normal text-(--text-h) shadow-[5px_5px_8px_rgb(140,140,140)] [&_a]:no-underline! [&_a:not(.tile-link)]:relative [&_a:not(.tile-link)]:z-10 [&_a:not([class])]:text-[#1976d2]">
       <div>
-        <div className="mx-2.5 pt-3.75 pb-1.25 text-[24px] font-bold">
+        <div className="text-6 mx-2.5 pt-3.75 pb-1.25 font-bold">
           {/* covers the whole tile, links in the text are placed above it */}
           <Link
             className="tile-link text-inherit after:absolute after:inset-0"
@@ -71,12 +70,11 @@ export function GameTile({
           </tr>
           <tr>
             <td>{t('landing.tile.languages')}</td>
-            <td className="[&>*+*]:ml-[.5em]">
+            <td className="[&>*+*]:ml-2">
               {tile.languages.map(iso => (
                 <LanguageIcon
                   key={iso}
                   iso={iso}
-                  title={config.languages.find(l => l.iso === iso)?.name}
                   className="inline w-auto text-left leading-[inherit]"
                 />
               ))}
