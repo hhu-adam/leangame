@@ -69,6 +69,8 @@ export const en = {
     layout: 'Layout',
     layouts: { mobile: 'Mobile', auto: 'Auto', desktop: 'Desktop' },
     showLockedInventory: 'Show locked inventory items',
+    theme: 'Theme',
+    themes: { light: 'Light', auto: 'Auto', dark: 'Dark' },
     browserStorage: 'Browser Storage',
     savePreferences: 'Save my settings (in the browser storage)',
   },

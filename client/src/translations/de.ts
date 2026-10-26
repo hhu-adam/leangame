@@ -72,6 +72,8 @@ export const de: DeepPartialTranslation<typeof en> = {
     layout: 'Seitenlayout',
     layouts: { mobile: 'Mobil', auto: 'Auto', desktop: 'Desktop' },
     showLockedInventory: 'Gesperrte Inventar-Einträge anzeigen',
+    theme: 'Farbschema',
+    themes: { light: 'Hell', auto: 'Auto', dark: 'Dunkel' },
     browserStorage: 'Browserspeicher',
     savePreferences: 'Einstellungen im Browser speichern',
   },

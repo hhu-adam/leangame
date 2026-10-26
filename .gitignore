@@ -12,6 +12,10 @@ node_modules
 dist-ssr
 *.local
 
+# TODO
+OLD_CLIENT/
+config-hhu.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

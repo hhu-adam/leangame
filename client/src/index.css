@@ -87,6 +87,18 @@ stay readable.
   }
 }
 
+/* `dark:` follows the `theme` preference, or the system if it is `auto` */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
 /* `flex-col` implies `flex`, so `flex flex-col` can be shortened to `flex-col` */
 @utility flex-col {
   display: flex;
@@ -94,19 +106,20 @@ stay readable.
 }
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
+  /* light and dark colours, see the `theme` preference */
+  --text: light-dark(#6b6375, #9ca3af);
+  --text-h: light-dark(#08060d, #f3f4f6);
+  --bg: light-dark(#fff, #16171d);
+  --border: light-dark(#e5e4e7, #2e303a);
+  --code-bg: light-dark(#f4f3ec, #1f2028);
   /* every second section of the landing page */
-  --section-bg: #f8f9fa;
-  --accent: #1070b0;
-  --accent-bg: rgba(16, 112, 176, 0.1);
-  --accent-border: rgba(16, 112, 176, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --section-bg: light-dark(#f8f9fa, #1c1d24);
+  --accent: light-dark(#1070b0, #00b0e0);
+  --accent-bg: light-dark(rgba(16, 112, 176, 0.1), rgba(0, 176, 224, 0.15));
+  --accent-border: light-dark(rgba(16, 112, 176, 0.5), rgba(0, 176, 224, 0.5));
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)) 0 10px 15px -3px,
+    light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25)) 0 4px 6px -2px;
 
   --sans: var(--font-sans);
   --heading: var(--font-sans);
@@ -114,6 +127,7 @@ stay readable.
 
   font: 16px/1.45 var(--sans);
   letter-spacing: 0.18px;
+  /* `light-dark()` follows the system, unless the player chose a theme */
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
@@ -121,26 +135,12 @@ stay readable.
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --section-bg: #1c1d24;
-    --accent: #00b0e0;
-    --accent-bg: rgba(0, 176, 224, 0.15);
-    --accent-border: rgba(0, 176, 224, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  &[data-theme='light'] {
+    color-scheme: light;
   }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  &[data-theme='dark'] {
+    color-scheme: dark;
   }
 }
 

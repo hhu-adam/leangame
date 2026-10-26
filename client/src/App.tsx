@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 
 import { NotFound } from './ErrorPage/NotFound'
 import { useLanguageInUrl } from './hooks/useLanguageInUrl'
+import { useTheme } from './hooks/useTheme'
 import { LandingPage } from './LandingPage/LandingPage'
 import { AppBar } from './Navigation/AppBar'
 import { GamePage } from './pages/GamePage'
@@ -13,6 +14,7 @@ import { pathSegmentsAtom } from './state/location-atoms'
 
 export function App() {
   useLanguageInUrl()
+  useTheme()
   return (
     <>
       <AppBar />

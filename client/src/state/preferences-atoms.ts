@@ -6,6 +6,8 @@ export interface Preferences {
   isSavePreferences: boolean
   isSuggestionsMobileMode: boolean // TODO: remove me
   useFlags: boolean
+  /** `auto` follows the system setting */
+  theme: 'light' | 'auto' | 'dark'
   showLockedInventory: boolean
 }
 
@@ -21,6 +23,7 @@ const defaultPreferences: Preferences = {
   isSavePreferences: false,
   isSuggestionsMobileMode: true,
   useFlags: false,
+  theme: 'auto',
   showLockedInventory: true,
 }
 
@@ -70,3 +73,9 @@ export const mobileAtom = atom(get => {
       return widthBelowThreshold
   }
 })
+
+/** The colour theme */
+export const themeAtom = atom(
+  get =>
+    (get(preferencesAtom).theme as Preferences['theme'] | undefined) ?? 'auto',
+)
