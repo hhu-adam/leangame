@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai'
 import type { AnchorHTMLAttributes, MouseEvent } from 'react'
 
-import { locationAtom } from '../state/location'
+import { locationAtom } from '../state/location-atoms'
 
 type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }
 

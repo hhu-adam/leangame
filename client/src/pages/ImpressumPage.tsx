@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
 import { ContactInfo, LegalPage } from '../components/LegalPage'
-import { legalAtom, localize } from '../state/legal'
+import { configAtom, localize } from '../state/config'
 
 export function ImpressumPage() {
   return <LegalPage Content={Impressum} />
@@ -10,7 +10,7 @@ export function ImpressumPage() {
 
 function Impressum({ lng }: { lng: string }) {
   const { t } = useTranslation(undefined, { lng })
-  const impressum = useAtomValue(legalAtom).data?.impressum
+  const impressum = useAtomValue(configAtom).data?.impressum
   return (
     <>
       <h2>{t('impressum.title')}</h2>

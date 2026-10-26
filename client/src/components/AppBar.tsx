@@ -9,15 +9,16 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAtom, useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
-import { ReactCountryFlag } from 'react-country-flag'
 import { useTranslation } from 'react-i18next'
 import { twMerge } from 'tailwind-merge'
 
 import config from '../config.json'
 import { setLanguage } from '../i18n'
-import { pathSegmentsAtom } from '../state/location'
+import { pathSegmentsAtom } from '../state/location-atoms'
 import { langNavOpenAtom, navOpenAtom } from '../state/navigation-atoms'
-import { mobileAtom, preferencesAtom } from '../state/preferences-atoms'
+import { mobileAtom } from '../state/preferences-atoms'
+import { GithubIcon } from './GithubIcon'
+import { LanguageIcon } from './LanguageIcon'
 import { Link } from './Link'
 
 // TODO: most buttons have no action yet, they are placeholders for the game pages
@@ -30,7 +31,7 @@ type NavButtonProps = {
   text?: string
   /** tooltip, also the accessible name if there is no `text` */
   title: string
-  /** a page of the client to navigate to */
+  /** a page of the client to navigate to, or an external URL opened in a new tab */
   href?: string
   onClick?: () => void
   disabled?: boolean
@@ -49,7 +50,7 @@ function NavButton({
   className,
 }: NavButtonProps) {
   const classes = twMerge(
-    'inline-flex cursor-pointer items-center gap-2 rounded px-3 py-2 whitespace-nowrap hover:bg-white/15 disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent',
+    'inline-flex cursor-pointer items-center gap-2 text-inherit no-underline rounded px-3 py-2 whitespace-nowrap hover:bg-white/15 disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent',
     className,
   )
   const content = (
@@ -58,9 +59,31 @@ function NavButton({
       {text}
     </>
   )
+  const ariaLabel = text ? undefined : title
+  if (href && !disabled && /^https?:\/\//.test(href)) {
+    return (
+      <a
+        className={classes}
+        href={href}
+        title={title}
+        aria-label={ariaLabel}
+        target="_blank"
+        rel="noreferrer"
+        onClick={onClick}
+      >
+        {content}
+      </a>
+    )
+  }
   if (href && !disabled) {
     return (
-      <Link className={classes} href={href} title={title} onClick={onClick}>
+      <Link
+        className={classes}
+        href={href}
+        title={title}
+        aria-label={ariaLabel}
+        onClick={onClick}
+      >
         {content}
       </Link>
     )
@@ -70,7 +93,7 @@ function NavButton({
       type="button"
       className={classes}
       title={title}
-      aria-label={text ? undefined : title}
+      aria-label={ariaLabel}
       disabled={disabled}
       onClick={onClick}
     >
@@ -99,18 +122,6 @@ function Dropdown({
     >
       {children}
     </div>
-  )
-}
-
-/** The flag of a language if enabled in the preferences, otherwise its ISO code */
-function LanguageIcon({ iso }: { iso: string }) {
-  const { useFlags } = useAtomValue(preferencesAtom)
-  const flag = config.languages.find(l => l.iso === iso)?.flag
-  if (useFlags && flag) return <ReactCountryFlag countryCode={flag} svg />
-  return (
-    <span className="inline-block w-[1.5em] text-center leading-none lowercase">
-      {iso}
-    </span>
   )
 }
 
@@ -197,6 +208,14 @@ export function AppBar() {
     setLangNavOpen(false)
   }
 
+  const githubButton = (
+    <NavButton
+      iconElement={<GithubIcon />}
+      title={t('appBar.github')}
+      href="https://github.com/leanprover-community/lean4game"
+    />
+  )
+
   return (
     <header className="relative flex shrink-0 items-center justify-between gap-2 bg-primary px-2 py-1 text-white">
       {mobile ? (
@@ -212,6 +231,7 @@ export function AppBar() {
             )}
           </div>
           <div className="flex items-center">
+            {isLandingPage && githubButton}
             <LanguageButton open={langNavOpen} onToggle={toggleLangNav} />
             <NavButton
               icon={navOpen ? faXmark : faBars}
@@ -236,6 +256,7 @@ export function AppBar() {
             )}
           </div>
           <div className="flex items-center">
+            {isLandingPage && githubButton}
             <LanguageButton open={langNavOpen} onToggle={toggleLangNav} />
             <NavButton
               icon={navOpen ? faXmark : faBars}

@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
-import { ErrorPage } from '../pages/ErrorPage'
+import { ErrorPage } from './ErrorPage'
 
 // see: https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
 

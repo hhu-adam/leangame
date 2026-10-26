@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
 import { ContactInfo, LegalPage } from '../components/LegalPage'
-import { legalAtom, localize } from '../state/legal'
+import { configAtom, localize } from '../state/config'
 
 export function PrivacyPage() {
   return <LegalPage Content={PrivacyPolicy} />
@@ -10,7 +10,7 @@ export function PrivacyPage() {
 
 function PrivacyPolicy({ lng }: { lng: string }) {
   const { t } = useTranslation(undefined, { lng })
-  const serverLocation = useAtomValue(legalAtom).data?.privacy?.serverLocation
+  const serverLocation = useAtomValue(configAtom).data?.privacy?.serverLocation
   return (
     <div className="max-w-3xl">
       <h2>{t('privacy.title')}</h2>

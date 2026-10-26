@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai'
 import { Trans, useTranslation } from 'react-i18next'
 
-import { ErrorMessage, IssueLink } from '../components/ErrorMessage'
-import { locationAtom } from '../state/location'
+import { locationAtom } from '../state/location-atoms'
+import { ErrorMessage, IssueLink } from './ErrorMessage'
 
 /** The 404 page */
 export function NotFound() {

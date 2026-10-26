@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { DEFAULT_LANGUAGE, LANGUAGE_PARAM } from '../i18n'
-import { locationAtom } from '../state/location'
+import { locationAtom } from '../state/location-atoms'
 
 /**
  * Keeps `?lang=` in the URL in sync with the current language, so that links include

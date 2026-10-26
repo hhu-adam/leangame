@@ -41,7 +41,6 @@ export function ErrorMessage({ children }: { children: ReactNode }) {
 export function IssueLink({ children }: { children?: ReactNode }) {
   return (
     <a
-      className="underline"
       href="https://github.com/leanprover-community/lean4game/issues"
       target="_blank"
       rel="noreferrer"

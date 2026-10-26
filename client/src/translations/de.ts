@@ -57,6 +57,7 @@ export const de: DeepPartialTranslation<typeof en> = {
     impressum: 'Impressum',
     privacy: 'Datenschutzerklärung',
     preferences: 'Einstellungen',
+    github: 'Den Lean-Game-Server auf GitHub ansehen',
     openMenu: 'Menü öffnen',
     closeMenu: 'Menü schließen',
     openLanguageMenu: 'Sprachmenü öffnen',
@@ -73,5 +74,48 @@ export const de: DeepPartialTranslation<typeof en> = {
     showLockedInventory: 'Gesperrte Inventar-Einträge anzeigen',
     browserStorage: 'Browserspeicher',
     savePreferences: 'Einstellungen im Browser speichern',
+  },
+  landing: {
+    title: 'Lean-Lern-Spiel-Server',
+    subtitle:
+      'Eine Sammlung von Lernspielen für den Beweisassistenten <leanLink>Lean</leanLink> <i>(Lean 4)</i> und dessen mathematische Bibliothek <mathlibLink>mathlib</mathlibLink>',
+    games: {
+      loading: 'Spiele werden geladen…',
+      error: 'Die Spiele konnten nicht geladen werden.',
+      none: 'Keine Spiele verfügbar.',
+      noneDev:
+        'Lokale Spiele sind die Ordner neben diesem Repository, die ein gebautes Spiel enthalten, d.h. eine `.lake/gamedata/game.json`.',
+    },
+    tile: {
+      prerequisites: 'Voraussetzungen',
+      prerequisitesTitle: 'Diese Spiele am besten vorher spielen.',
+      worlds: 'Welten',
+      levels: 'Level',
+      languages: 'Sprachen',
+    },
+    capacity: {
+      title: 'Server-Auslastung',
+      description:
+        'Dieser Server läuft auf universitärer Infrastruktur mit begrenzten Kapazitäten. Wir schätzen, dass unsere Konfiguration etwa 50 gleichzeitige Spiele mit hoher Leistung und bis zu 180 gleichzeitige Spiele mit geringerer Leistung unterstützt.',
+      memory: 'RAM: <strong>{{value}} %</strong> belegt.',
+      cpu: 'CPU: <strong>{{value}} %</strong> ausgelastet.',
+    },
+    development: {
+      title: 'Entwicklungsstand',
+      description:
+        'Der Spieleserver und alle Spiele befinden sich in fortlaufender Entwicklung. Wir bitten darum, Fehler und Ungereimtheiten als <issueLink>GitHub Issue</issueLink> zu melden.',
+    },
+    newGames: {
+      title: 'Neue Spiele hinzufügen',
+      template:
+        'Für alle, die selbst ein Spiel entwickeln möchten, gibt es das <skeletonLink>GameSkeleton GitHub Repo</skeletonLink> als Vorlage und die Anleitung <docsLink>How to Create a Game</docsLink>, die auch erklärt, wie ein Spiel auf den Server geladen und gespielt werden kann. Fragen dazu beantworten wir gern.',
+      featured:
+        'Auf dieser Seite ist nur eine kuratierte Auswahl an Spielen sichtbar. Wir erweitern diese Auswahl auf Anfrage sehr gerne.',
+    },
+    funding: {
+      title: 'Finanzierung',
+      description:
+        'Dieser Spiele-Server wird von der Heinrich-Heine-Universität Düsseldorf bereitgestellt. Die lean4game-Software wurde im Rahmen des Projekts <adamLink>ADAM: Anticipating the Digital Age of Mathematics</adamLink> entwickelt, finanziert durch das Programm <i>Freiraum 2022</i> der <i>Stiftung Innovation in der Hochschullehre</i>. Der laufende Betrieb des Servers und die Weiterentwicklung der Software werden durch Mittel des <i>AI for Math Fund</i> der Stiftung <i>Renaissance Philanthropy</i> ermöglicht.',
+    },
   },
 } as const

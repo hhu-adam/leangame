@@ -32,6 +32,17 @@
   --color-error-bg: #ffbaba;
 }
 
+/*
+In the base layer, so that Tailwind classes like `no-underline` or `text-white` override
+it. `--accent` is the theme colour, lighter in dark mode to stay readable.
+*/
+@layer base {
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+}
+
 /* `flex-col` implies `flex`, so `flex flex-col` can be shortened to `flex-col` */
 @utility flex-col {
   display: flex;
@@ -44,6 +55,8 @@
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
+  /* every second section of the landing page */
+  --section-bg: #f8f9fa;
   --accent: #1070b0;
   --accent-bg: rgba(16, 112, 176, 0.1);
   --accent-border: rgba(16, 112, 176, 0.5);
@@ -77,6 +90,7 @@
     --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
+    --section-bg: #1c1d24;
     --accent: #00b0e0;
     --accent-bg: rgba(0, 176, 224, 0.15);
     --accent-border: rgba(0, 176, 224, 0.5);

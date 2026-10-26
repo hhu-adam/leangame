@@ -2,13 +2,13 @@ import './i18n'
 import { useAtomValue } from 'jotai'
 
 import { AppBar } from './components/AppBar'
+import { NotFound } from './ErrorPage/NotFound'
 import { useLanguageInUrl } from './hooks/useLanguageInUrl'
+import { LandingPage } from './LandingPage/LandingPage'
 import { ImpressumPage } from './pages/ImpressumPage'
-import { LandingPage } from './pages/LandingPage'
-import { NotFound } from './pages/NotFound'
 import { PreferencesPage } from './pages/PreferencesPage'
 import { PrivacyPage } from './pages/PrivacyPage'
-import { pathSegmentsAtom } from './state/location'
+import { pathSegmentsAtom } from './state/location-atoms'
 
 export function App() {
   useLanguageInUrl()

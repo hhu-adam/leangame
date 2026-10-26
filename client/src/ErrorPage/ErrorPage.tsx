@@ -1,6 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next'
 
-import { ErrorMessage, IssueLink } from '../components/ErrorMessage'
+import { ErrorMessage, IssueLink } from './ErrorMessage'
 
 /** The fallback page for uncaught errors */
 export function ErrorPage({ error }: { error?: Error }) {

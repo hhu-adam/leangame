@@ -54,6 +54,7 @@ export const en = {
     impressum: 'Impressum',
     privacy: 'Privacy Policy',
     preferences: 'Preferences',
+    github: 'View the Lean Game Server on GitHub',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
     openLanguageMenu: 'Open language menu',
@@ -70,5 +71,48 @@ export const en = {
     showLockedInventory: 'Show locked inventory items',
     browserStorage: 'Browser Storage',
     savePreferences: 'Save my settings (in the browser storage)',
+  },
+  landing: {
+    title: 'Lean Game Server',
+    subtitle:
+      'A repository of learning games for the proof assistant <leanLink>Lean</leanLink> <i>(Lean 4)</i> and its mathematical library <mathlibLink>mathlib</mathlibLink>',
+    games: {
+      loading: 'Loading games…',
+      error: 'The games could not be loaded.',
+      none: 'No games available.',
+      noneDev:
+        'Local games are the folders next to this repository which contain a built game, i.e. a `.lake/gamedata/game.json`.',
+    },
+    tile: {
+      prerequisites: 'Prerequisites',
+      prerequisitesTitle: 'Consider playing these games first.',
+      worlds: 'Worlds',
+      levels: 'Levels',
+      languages: 'Languages',
+    },
+    capacity: {
+      title: 'Server capacity',
+      description:
+        'As this server runs Lean on our university machines, it has a limited capacity. We estimate that our setup will support around 50 simultaneous games at high performance, and up to 180 simultaneous games at a slower pace.',
+      memory: 'RAM: <strong>{{value}} %</strong> used.',
+      cpu: 'CPU: <strong>{{value}} %</strong> used.',
+    },
+    development: {
+      title: 'Development notes',
+      description:
+        'Most aspects of the games and the infrastructure are still in development. Feel free to file a <issueLink>GitHub Issue</issueLink> about any problems you experience!',
+    },
+    newGames: {
+      title: 'Adding new games',
+      template:
+        'If you are considering writing your own game, you should use the <skeletonLink>GameSkeleton GitHub Repo</skeletonLink> as a template and read <docsLink>How to Create a Game</docsLink>, which also explains how to load your game into the server and play it. We encourage you to contact us if you have any questions.',
+      featured:
+        "Featured games on this page are added manually. Please get in contact and we'll happily add yours.",
+    },
+    funding: {
+      title: 'Funding',
+      description:
+        'This server is hosted at Heinrich Heine University Düsseldorf. The lean4game software was developed as part of the project <adamLink>ADAM: Anticipating the Digital Age of Mathematics</adamLink>, funded by the programme <i>Freiraum 2022</i> of the <i>Stiftung Innovation in der Hochschullehre</i>. Ongoing maintenance and development are generously supported by <i>Renaissance Philanthropy</i> through the <i>AI for Math Fund</i>.',
+    },
   },
 } as const

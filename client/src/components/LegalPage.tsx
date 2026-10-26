@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { type ComponentType, Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { legalAtom, localize } from '../state/legal'
+import { configAtom, localize } from '../state/config'
 
 /**
  * Layout of the impressum and the privacy policy. If the current language is translated,
@@ -36,7 +36,7 @@ export function LegalPage({
 /** The contact information from the server config, in the language `lng` */
 export function ContactInfo({ lng }: { lng: string }) {
   const { t } = useTranslation(undefined, { lng })
-  const { data: legal, isError } = useAtomValue(legalAtom)
+  const { data: legal, isError } = useAtomValue(configAtom)
   if (isError) return <p>{t('legal.loadError')}</p>
   const contact = legal?.contact
   if (!contact) return null
