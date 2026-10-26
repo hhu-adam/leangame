@@ -68,7 +68,7 @@ it. `--accent` is the theme colour, lighter in dark mode to stay readable.
   --heading: var(--font-sans);
   --mono: var(--font-mono);
 
-  font: 18px/1.45 var(--sans);
+  font: 16px/1.45 var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
@@ -77,10 +77,6 @@ it. `--accent` is the theme colour, lighter in dark mode to stay readable.
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
 @media (prefers-color-scheme: dark) {

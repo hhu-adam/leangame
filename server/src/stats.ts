@@ -1,17 +1,14 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import type {
-  ApiGameActivityStats,
-  ApiGameImportStats,
-  LeanInstance,
-} from './api.js'
+import type { ApiGameActivityStats, ApiGameImportStats } from './api.js'
 import {
   addGameActivity,
   getGameActivity,
   getImportStats,
 } from './database/db.js'
 import { importedGames } from './import/imported.js'
+import type { LeanInstance } from './lean/leanInstances.js'
 
 /**
  * The import statistics of all imported games, featured or not, including games which

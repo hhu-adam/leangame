@@ -3,12 +3,9 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-import type {
-  ApiProofCheckInput,
-  ApiProofCheckResult,
-  LeanInstance,
-} from '../api.js'
+import type { ApiProofCheckInput, ApiProofCheckResult } from '../api.js'
 import { gameDataFilePath } from '../gameData.js'
+import type { LeanInstance } from './leanInstances.js'
 import {
   CheckTimeoutError,
   closeDoc,

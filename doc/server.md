@@ -25,15 +25,16 @@
 
 `server/config.json` (see `CONFIG_PATH`) is read on every request, so changes apply without a restart. All fields are optional.
 
-| Field               | Type                                | Description                                                                                                 | Default |
-| ------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------- |
-| `featuredGames`     | `{ owner: string, repo: string }[]` | games listed first by `/api/games`, in this order. Featured games which are not imported are skipped.       | `[]`    |
-| `listImportedGames` | boolean                             | whether `/api/games` also lists all other imported games. `/stats/imports` always lists all imported games. | `false` |
-| `contact`           | object                              | contact information shown in the impressum and the privacy policy, see below                                | –       |
-| `impressum`         | object                              | further content of the impressum, see below                                                                 | –       |
-| `privacy`           | object                              | further content of the privacy policy, see below                                                            | –       |
+| Field               | Type                                         | Description                                                                                                 | Default |
+| ------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `featuredGames`     | `{ owner: string, repo: string }[]`          | games listed first by `/api/games`, in this order. Featured games which are not imported are skipped.       | `[]`    |
+| `listImportedGames` | boolean                                      | whether `/api/games` also lists all other imported games. `/stats/imports` always lists all imported games. | `false` |
+| `announcements`     | `{ title: localized, message: localized }[]` | shown at the top of the landing page, `message` in Markdown                                                 | `[]`    |
+| `contact`           | object                                       | contact information shown in the impressum and the privacy policy, see below                                | –       |
+| `impressum`         | object                                       | further content of the impressum, see below                                                                 | –       |
+| `privacy`           | object                                       | further content of the privacy policy, see below                                                            | –       |
 
-The last three are served by `/api/legal`. Fields marked as _localized_ are either one string for all
+`announcements`, `contact`, `impressum` and `privacy` are served to the client by `/api/config`. Fields marked as _localized_ are either one string for all
 languages or an object like `{ "en": "Germany", "de": "Deutschland" }`, where missing languages fall back
 to `en`.
 
@@ -49,4 +50,4 @@ to `en`.
 | `impressum.link`         | `{ label: localized, url: string }` | link to the impressum of the operating institution                   |
 | `privacy.serverLocation` | localized                           | country where the server is located                                  |
 
-In development mode, `/api/games` also lists the local games: the folders next to this repository with a `.lake/gamedata/game.json`, with owner `local`.
+In development mode, `/api/games` also lists the `GameSkeleton` of this repository, with owner `test` and repo `testgame`, and the local games: the folders next to this repository with a `.lake/gamedata/game.json`, with owner `local`.

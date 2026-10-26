@@ -1,9 +1,34 @@
+import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 
-import type { ApiGameInstanceCount, LeanInstance } from '../api.js'
-import { createLspClient } from './lspClient.js'
+import type { ApiGameInstanceCount } from '../api.js'
+import { createLspClient, type LspClient } from './lspClient.js'
 import { forgetInstanceDocs } from './openDocuments.js'
 import { noBwrap, spawnGame } from './sandbox.js'
+
+export interface LeanInstance {
+  id: string
+  gamePath: string
+  /** where the `gamePath` is mounted inside the bubblewrap containter. */
+  gamePathBwrap: string
+  process: ChildProcessWithoutNullStreams
+  status: LeanInstanceStatus
+  startedAt: Date
+  exitCode: number | null
+  client: LspClient
+  /** resolves once the LSP `initialize`/`initialized` handshake has completed */
+  lspReady: Promise<void>
+  /** the game as requested by the player, lower case, for the play statistics */
+  game: { owner: string; repo: string }
+  /** time in ms of the last start, check or keepalive, instances idle for too long are stopped */
+  lastActivityAt: number
+  /** time in ms when the process exited */
+  exitedAt?: number
+  /** time of the last check in ms, for the play statistics */
+  lastCheckAt?: number
+}
+
+export type LeanInstanceStatus = 'starting' | 'running' | 'exited'
 
 const instances = new Map<string, LeanInstance>()
 

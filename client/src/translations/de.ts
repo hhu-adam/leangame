@@ -97,6 +97,7 @@ export const de: DeepPartialTranslation<typeof en> = {
       title: 'Server-Auslastung',
       description:
         'Dieser Server läuft auf universitärer Infrastruktur mit begrenzten Kapazitäten. Wir schätzen, dass unsere Konfiguration etwa 50 gleichzeitige Spiele mit hoher Leistung und bis zu 180 gleichzeitige Spiele mit geringerer Leistung unterstützt.',
+      players: 'Aktive Spieler:innen: <strong>{{count}}</strong>',
       memory: 'RAM: <strong>{{value}} %</strong> belegt.',
       cpu: 'CPU: <strong>{{value}} %</strong> ausgelastet.',
     },

@@ -1,4 +1,4 @@
-import type { LeanInstance } from '../api.js'
+import type { LeanInstance } from './leanInstances.js'
 
 /*
 This file provides basic functionality to open, modify, and close a file in the Lean server.

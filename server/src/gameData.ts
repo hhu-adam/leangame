@@ -4,14 +4,19 @@ import path from 'node:path'
 
 import type { Response } from 'express'
 
-import { ApiGameInfo } from './api.js'
+import type { ApiGameData, ApiGameInfo } from './api.js'
 import { readConfig } from './config.js'
 import { importedGamePath, importedGames } from './import/imported.js'
 import { isDevMode } from './utils/devMode.js'
 import { subfolders } from './utils/fs.js'
 import { safeJoin } from './utils/path.js'
 
-const TEST_GAME_PATH = path.resolve(import.meta.dirname, '..', '..', 'GameSkeleton')
+const TEST_GAME_PATH = path.resolve(
+  import.meta.dirname,
+  '..',
+  '..',
+  'GameSkeleton',
+)
 const REPO_PARENT_DIR = path.resolve(import.meta.dirname, '..', '..', '..')
 
 /** The TestGame is only available as `test/testgame` */
@@ -50,9 +55,9 @@ export function i18nFilePath(gamePath: string, lang: string) {
 }
 
 /**
- * The games for the landing page: the featured games of the config, in dev mode the local
- * games next to this repository, and if the config allows it all other imported games.
- * Games without a `game.json` are skipped.
+ * The games for the landing page: the featured games of the config, in dev mode the
+ * GameSkeleton (as `test/testgame`) and the local games next to this repository, and if
+ * the config allows it all other imported games. Games without a `game.json` are skipped.
  */
 export async function listGames(): Promise<ApiGameInfo[]> {
   const config = await readConfig()
@@ -74,6 +79,7 @@ export async function listGames(): Promise<ApiGameInfo[]> {
   }
 
   if (isDevMode()) {
+    add(await gameInfo('test', 'testgame', TEST_GAME_PATH, false))
     for (const repo of await subfolders(REPO_PARENT_DIR)) {
       add(
         await gameInfo('local', repo, path.join(REPO_PARENT_DIR, repo), false),
@@ -104,7 +110,7 @@ async function gameInfo(
   if (!filePath) return undefined
   const gameJson = await fs
     .readFile(filePath, 'utf-8')
-    .then(content => JSON.parse(content))
+    .then(content => JSON.parse(content) as ApiGameData)
     .catch(() => undefined)
   if (!gameJson) return undefined
   return {

@@ -1,6 +1,8 @@
-import type { ChildProcessWithoutNullStreams } from 'node:child_process'
-
-import type { LspClient } from './lean/lspClient.js'
+/*
+The types of the data exchanged between server and client. This file is identical in
+`server/src/api.ts` and `client/src/api.ts`, check with `npm run api:check`. It must not
+import anything.
+*/
 
 /** API input to validate a proof */
 export interface ApiProofCheckInput {
@@ -88,30 +90,6 @@ export interface ApiDiagnostic {
   character: number
 }
 
-export interface LeanInstance {
-  id: string
-  gamePath: string
-  /** where the `gamePath` is mounted inside the bubblewrap containter. */
-  gamePathBwrap: string
-  process: ChildProcessWithoutNullStreams
-  status: LeanInstanceStatus
-  startedAt: Date
-  exitCode: number | null
-  client: LspClient
-  /** resolves once the LSP `initialize`/`initialized` handshake has completed */
-  lspReady: Promise<void>
-  /** the game as requested by the player, lower case, for the play statistics */
-  game: { owner: string; repo: string }
-  /** time in ms of the last start, check or keepalive, instances idle for too long are stopped */
-  lastActivityAt: number
-  /** time in ms when the process exited */
-  exitedAt?: number
-  /** time of the last check in ms, for the play statistics */
-  lastCheckAt?: number
-}
-
-export type LeanInstanceStatus = 'starting' | 'running' | 'exited'
-
 /** A game to be displayed on the landing page */
 export interface ApiGameInfo {
   owner: string
@@ -119,8 +97,142 @@ export interface ApiGameInfo {
   /** listed in the `featuredGames` of the server config */
   featured: boolean
   /** `tile` and `settings` of the game's `game.json` */
-  tile: unknown
-  settings: unknown
+  tile: ApiGameTile | null
+  settings: ApiGameSettings | null
+}
+
+/** The `tile` of a game's `game.json`, shown on the landing page */
+export interface ApiGameTile {
+  title: string
+  short: string
+  long: string
+  prerequisites: string[]
+  worlds: number
+  levels: number
+  languages: string[]
+  /** e.g. `images/cover.png` */
+  image?: string
+}
+
+/** The `settings` of a game's `game.json` */
+export interface ApiGameSettings {
+  /** an empty translation hides a text instead of showing the original */
+  allowEmptyTranslations?: boolean
+}
+
+/** A game's `game.json`, see `/api/data/:owner/:game/game` */
+export interface ApiGameData {
+  title: null | string
+  introduction: null | string
+  info: null | string
+  worlds: null | {
+    nodes: {
+      [id: string]: {
+        id: string
+        title: string
+        introduction: string
+        image: string
+      }
+    }
+    edges: string[][]
+  }
+  worldSize: null | { [key: string]: number }
+  authors: null | string[]
+  conclusion: null | string
+  tile: null | ApiGameTile
+  image: null | string
+  settings?: null | ApiGameSettings
+}
+
+export interface ApiInventoryTile {
+  name: string
+  displayName: string
+  category: string
+  disabled: boolean
+  locked: boolean
+  new: boolean
+  hidden: boolean
+  altTitle: string
+  world: string | null
+  level: number | null
+  proven: boolean
+}
+
+/** A level, see `/api/data/:owner/:game/level/:world/:level` */
+export interface ApiLevelData {
+  title: null | string
+  introduction: null | string
+  conclusion: null | string
+  index: number
+  tactics: ApiInventoryTile[]
+  lemmas: ApiInventoryTile[]
+  definitions: ApiInventoryTile[]
+  descrText: null | string
+  descrFormat: null | string
+  lemmaTab: null | string
+  statementName: null | string
+  displayName: null | string
+  template: null | string
+  image: null | string
+}
+
+/** The inventory shown on a game's welcome page, see `/api/data/:owner/:game/inventory` */
+export interface ApiInventoryOverview {
+  tactics: ApiInventoryTile[]
+  lemmas: ApiInventoryTile[]
+  definitions: ApiInventoryTile[]
+  lemmaTab: null | string
+}
+
+/** Documentation of a tactic, theorem or definition, see `/api/data/:owner/:game/doc/:kind/:name` */
+export interface ApiDoc {
+  name: string
+  displayName: string
+  content: string
+  statement: string
+  type: string
+  category: string
+}
+
+/**
+ * Text which may differ per language, either one string for all languages or e.g.
+ * `{ "en": "Germany", "de": "Deutschland" }`. Missing languages fall back to `en`.
+ */
+export type ApiLocalized = string | Partial<Record<string, string>>
+
+export interface ApiAnnouncement {
+  title: ApiLocalized
+  /** in Markdown */
+  message: ApiLocalized
+}
+
+/** The part of the config which the client gets from `/api/config` */
+export interface ApiClientConfig {
+  /** Shown at the top of the landing page */
+  announcements: ApiAnnouncement[]
+  /** The responsible persons, shown in the impressum and the privacy policy */
+  contact?: {
+    name: string
+    /** One entry per line */
+    address: ApiLocalized[]
+    phone?: string
+    /** Link to further contact details */
+    url?: string
+    /** Email address for technical questions */
+    technicalEmail?: string
+  }
+  impressum?: {
+    /** e.g. the legal form, representation and supervisory authority of the operator */
+    legalForm?: ApiLocalized
+    /** VAT identification number according to §27a UStG */
+    vatId?: string
+    /** Link to the impressum of the operating institution */
+    link?: { label: ApiLocalized; url: string }
+  }
+  privacy?: {
+    /** Country where the server is located */
+    serverLocation?: ApiLocalized
+  }
 }
 
 /** Statistic about a game's import history */

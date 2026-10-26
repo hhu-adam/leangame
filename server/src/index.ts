@@ -2,9 +2,9 @@ import path from 'node:path'
 
 import express from 'express'
 
-import { ApiProofCheckInput } from './api.js'
+import type { ApiClientConfig, ApiProofCheckInput } from './api.js'
 import { serveClient } from './client.js'
-import { type LegalConfig, readConfig } from './config.js'
+import { readConfig } from './config.js'
 import {
   gameDataFilePath,
   i18nFilePath,
@@ -167,9 +167,14 @@ app.get('/api/games', async (_req, res) => {
   res.json(await listGames())
 })
 
-app.get('/api/legal', async (_req, res) => {
-  const { contact, impressum, privacy } = await readConfig()
-  res.json({ contact, impressum, privacy } satisfies LegalConfig)
+app.get('/api/config', async (_req, res) => {
+  const { announcements, contact, impressum, privacy } = await readConfig()
+  res.json({
+    announcements,
+    contact,
+    impressum,
+    privacy,
+  } satisfies ApiClientConfig)
 })
 
 app.get('/api/load', (_req, res) => {

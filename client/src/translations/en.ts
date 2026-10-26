@@ -94,6 +94,7 @@ export const en = {
       title: 'Server capacity',
       description:
         'As this server runs Lean on our university machines, it has a limited capacity. We estimate that our setup will support around 50 simultaneous games at high performance, and up to 180 simultaneous games at a slower pace.',
+      players: 'Active players: <strong>{{count}}</strong>',
       memory: 'RAM: <strong>{{value}} %</strong> used.',
       cpu: 'CPU: <strong>{{value}} %</strong> used.',
     },
