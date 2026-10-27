@@ -35,6 +35,9 @@ export const en = {
   },
   appBar: {
     backToLanding: 'Back to games selection',
+    backToGame: 'Back to the game overview',
+    backToWorld: 'Back to the world',
+    start: 'Start',
     home: 'Home',
     previous: 'Previous',
     previousLevel: 'Previous level',

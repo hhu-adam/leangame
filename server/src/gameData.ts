@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
@@ -32,7 +32,11 @@ export function requireGame(owner: string, game: string, res: Response) {
 
   if (owner.toLowerCase() === 'local') {
     if (isDevMode()) {
-      const localPath = safeJoin(REPO_PARENT_DIR, game)
+      // the game in the URL is lowercase, the folder may not be
+      const folder = readdirSync(REPO_PARENT_DIR).find(
+        name => name.toLowerCase() === game.toLowerCase(),
+      )
+      const localPath = folder && safeJoin(REPO_PARENT_DIR, folder)
       if (localPath && existsSync(localPath)) return localPath
     }
     res.status(404).json({ error: 'Game not found' })

@@ -1,5 +1,4 @@
 import {
-  faArrowLeft,
   faBars,
   faCircleInfo,
   faGear,
@@ -8,21 +7,21 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
-import { gameIdAtom, pathSegmentsAtom } from '../state/location-atoms'
+import { routeAtom } from '../state/location-atoms'
 import { langNavOpenAtom, navOpenAtom } from '../state/navigation-atoms'
 import { mobileAtom } from '../state/preferences-atoms'
-import { gameInfoAtom } from '../state/query-atoms'
-import { useGameTranslation } from '../utils/translation'
 import { Dropdown } from './Dropdown'
+import { GameNavigation } from './GameNavigation'
 import { GithubIcon } from './GithubIcon'
 import { LanguageButton, LanguageMenu } from './LanguageMenu'
 import { NavButton } from './NavButton'
+import { PageTitle, WorldTitle } from './PageTitle'
 
 /** The navigation bar at the top of every page */
 export function AppBar() {
   const { t } = useTranslation()
   const mobile = useAtomValue(mobileAtom)
-  const isLandingPage = useAtomValue(pathSegmentsAtom).length === 0
+  const isLandingPage = useAtomValue(routeAtom).page === 'landing'
   const [navOpen, setNavOpen] = useAtom(navOpenAtom)
   const [langNavOpen, setLangNavOpen] = useAtom(langNavOpenAtom)
 
@@ -54,15 +53,9 @@ export function AppBar() {
         <>
           {/* MOBILE VERSION */}
           <div className="flex flex-1 basis-0 items-center">
-            {!isLandingPage && (
-              <NavButton
-                icon={faArrowLeft}
-                title={t('appBar.backToLanding')}
-                href="/"
-              />
-            )}
+            <GameNavigation />
           </div>
-          <GameTitle />
+          <PageTitle />
           <div className="flex flex-1 basis-0 items-center justify-end">
             {isLandingPage && githubButton}
             <LanguageButton open={langNavOpen} onToggle={toggleLangNav} />
@@ -80,15 +73,10 @@ export function AppBar() {
         <>
           {/* DESKTOP VERSION */}
           <div className="flex flex-1 basis-0 items-center">
-            {!isLandingPage && (
-              <NavButton
-                icon={faArrowLeft}
-                title={t('appBar.backToLanding')}
-                href="/"
-              />
-            )}
+            <GameNavigation />
+            <WorldTitle />
           </div>
-          <GameTitle />
+          <PageTitle />
           <div className="flex flex-1 basis-0 items-center justify-end">
             {isLandingPage && githubButton}
             <LanguageButton open={langNavOpen} onToggle={toggleLangNav} />
@@ -134,25 +122,5 @@ function CommonMenuEntries() {
         href="/preferences"
       />
     </>
-  )
-}
-
-/** The title of the current game, if any */
-function GameTitle() {
-  const gameId = useAtomValue(gameIdAtom)
-  const { data: gameInfo } = useAtomValue(gameInfoAtom)
-  const { t: gameT } = useGameTranslation(
-    gameId ?? '',
-    gameInfo?.settings?.allowEmptyTranslations,
-  )
-  if (!gameId || !gameInfo?.title) return null
-  const title = gameT(gameInfo.title)
-  return (
-    <h1
-      className="m-0 min-w-0 truncate text-center text-lg leading-normal font-bold text-white"
-      title={title}
-    >
-      {title}
-    </h1>
   )
 }

@@ -19,6 +19,9 @@ const CLIENT_DIR = path.resolve(
 /** Paths handled by the server itself, which never fall back to the client */
 const SERVER_PATHS = /^\/(api|stats|ping)(\/|$)/
 
+/** The client's pages of games, `/g/owner/repo/...` */
+const GAME_PATHS = /^\/g\//
+
 /** Serves the built client. Must be called after all other routes. */
 export function serveClient(app: Express) {
   if (!existsSync(CLIENT_DIR)) {
@@ -39,9 +42,11 @@ export function serveClient(app: Express) {
 
   // `index.html` for all other pages, so that reloading a page of the client works. It is
   // never cached, so a new build is picked up immediately. Missing files, e.g. assets of an
-  // older build, get a 404 instead.
+  // older build, get a 404 instead. Game pages `/g/...` may contain dots, e.g. in the
+  // repository's name, so they are never files.
   app.get(/.*/, (req, res, next) => {
-    if (SERVER_PATHS.test(req.path) || path.extname(req.path)) return next()
+    if (SERVER_PATHS.test(req.path)) return next()
+    if (!GAME_PATHS.test(req.path) && path.extname(req.path)) return next()
     res.setHeader('Cache-Control', 'no-cache')
     res.sendFile(path.join(CLIENT_DIR, 'index.html'))
   })

@@ -1,19 +1,12 @@
 import { atom } from 'jotai'
-import { atomFamily } from 'jotai-family'
 import { atomWithQuery } from 'jotai-tanstack-query'
 
-import type { ApiGameData, ApiLevelData } from '../api'
-import { fetchJson, gameDataUrl } from '../utils/fetch'
+import type { ApiLevelData } from '../api'
+import { fetchJson, gameDataUrl, retryUnlessClientError } from '../utils/fetch'
+import { gameInfoAtomFamily } from './game-info-atoms'
 import { gameIdAtom, levelIdAtom, worldIdAtom } from './location-atoms'
 
-/** The info about all games */
-export const gameInfoAtomFamily = atomFamily((gameId: string) =>
-  atomWithQuery<ApiGameData>(() => ({
-    queryKey: ['gameInfo', gameId],
-    queryFn: () => fetchJson<ApiGameData>(gameDataUrl(gameId, 'game')),
-    enabled: gameId.length > 0,
-  })),
-)
+export { gameInfoAtomFamily }
 
 /** The info about the current game */
 export const gameInfoAtom = atom(get => {
@@ -35,6 +28,7 @@ export const levelInfoAtom = atomWithQuery<ApiLevelData>(get => {
           `level/${encodeURIComponent(worldId!)}/${levelId}`,
         ),
       ),
+    retry: retryUnlessClientError,
     enabled:
       gameId !== undefined && worldId !== undefined && levelId !== undefined,
   }

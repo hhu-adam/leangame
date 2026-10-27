@@ -38,6 +38,9 @@ export const de: DeepPartialTranslation<typeof en> = {
   },
   appBar: {
     backToLanding: 'Zurück zur Spielauswahl',
+    backToGame: 'Zurück zur Spielübersicht',
+    backToWorld: 'Zurück zur Welt',
+    start: 'Starten',
     home: 'Home',
     previous: 'Zurück',
     previousLevel: 'Vorheriges Level',

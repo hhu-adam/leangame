@@ -4,6 +4,7 @@ import type { ApiGameInfo } from '../api'
 import { LanguageIcon } from '../components/LanguageIcon'
 import { Link } from '../components/Link'
 import { Markdown } from '../components/Markdown'
+import { gamePath } from '../state/location-atoms'
 import { useGameTranslation } from '../utils/translation'
 
 /**
@@ -30,7 +31,7 @@ export function GameTile({
           {/* covers the whole tile, links in the text are placed above it */}
           <Link
             className="tile-link text-inherit after:absolute after:inset-0"
-            href={`/${game}`}
+            href={gamePath(`g/${game}`)}
           >
             {gameT(tile.title)}
           </Link>
