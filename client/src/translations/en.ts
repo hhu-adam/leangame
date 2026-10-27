@@ -90,6 +90,28 @@ export const en = {
   popup: {
     close: 'Close',
   },
+  gameInfo: {
+    progressSaving: {
+      title: 'Progress saving',
+      description:
+        'The game stores your progress in your local browser storage. If you delete it, your progress will be lost!<br/>Warning: In most browsers, deleting cookies will also clear the local storage (or "local site data"). Make sure to download your game progress first!',
+    },
+    accessibility: {
+      title: 'Accessibility',
+      description:
+        'If you experience any accessibilty barriers, please get in contact with us! We are dedicated to address such barriers to the best of our abilities.',
+    },
+    development: {
+      title: 'Development',
+      description:
+        'The game engine has been created by <strong>Alexander Bentkamp</strong>, <strong>Jon Eugster</strong>. On a prototype by <strong>Patrick Massot</strong>. The source code of this Lean game engine is <githubLink>available on Github</githubLink>. If you experience any problems, please file an <issueLink>Issue on Github</issueLink> or get directly in contact.',
+    },
+    funding: {
+      title: 'Funding',
+      description:
+        'This server is hosted at Heinrich Heine University Düsseldorf. The lean4game software was developed as part of the project <adamLink>ADAM: Anticipating the Digital Age of Mathematics</adamLink>, funded by the programme <i>Freiraum 2022</i> of the <i>Stiftung Innovation in der Hochschullehre</i>. Ongoing maintenance and development are generously supported by <i>Renaissance Philanthropy</i> through the <i>AI for Math Fund</i>.',
+    },
+  },
   rules: {
     rules: 'Rules',
     gameRules: 'Game Rules',

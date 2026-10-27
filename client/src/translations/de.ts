@@ -93,6 +93,28 @@ export const de: DeepPartialTranslation<typeof en> = {
   popup: {
     close: 'Schließen',
   },
+  gameInfo: {
+    progressSaving: {
+      title: 'Spielstandspeicherung',
+      description:
+        'Das Spiel speichert den Spielstand im lokalen Browserspeicher. Wird dieser gelöscht, ist der Spielstand nicht wiederherstellbar!<br/>Achtung: In üblichen Browsern bewirkt ein löschen von Cookies auch ein löschen des lokalen Browserspeichers (z.B. "local site data"). Der Spielstand sollte vorgehend heruntergeladen werden!',
+    },
+    accessibility: {
+      title: 'Barrierefreiheit',
+      description:
+        'Sollten Sie auf Barrieren stoßen, die Ihnen den Zugang erschweren, wenden Sie sich bitte an uns! Wir sind bestrebt, solche Barrieren nach besten Kräften zu beseitigen.',
+    },
+    development: {
+      title: 'Entwicklung',
+      description:
+        'Der Spieleserver wurde entwickelt von <strong>Alexander Bentkamp</strong>, <strong>Jon Eugster</strong>. Basierend auf einem Prototyp von <strong>Patrick Massot</strong>. Der Sourcecode dieses Lean-Game-Engine ist <githubLink>auf Github verfügbar</githubLink>. Bei Problemen, bitte einen <issueLink>Github-Issue</issueLink> ausfüllen oder direkt mit uns Kontakt aufnehmen.',
+    },
+    funding: {
+      title: 'Finanzierung',
+      description:
+        'Dieser Spiele-Server wird bereitgestellt vom Zentrum für Informations- und Medientechnologie der Heinrich-Heine-Universität Düsseldorf. Die lean4game-Software wurde im Rahmen des Projekts <adamLink>ADAM: Anticipating the Digital Age of Mathematics</adamLink> entwickelt, finanziert durch das Programm <i>Freiraum 2022</i> der <i>Stiftung Innovation in der Hochschullehre</i>. Der laufende Betrieb des Servers und die Weiterentwicklung der Software werden durch Mittel des <i>AI for Math Fund</i> der Stiftung <i>Renaissance Philanthropy</i> ermöglicht.',
+    },
+  },
   rules: {
     rules: 'Regeln',
     gameRules: 'Spielregeln',

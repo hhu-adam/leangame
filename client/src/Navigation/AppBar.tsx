@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 
 import { routeAtom } from '../state/location-atoms'
 import {
+  gameInfoOpenAtom,
   langNavOpenAtom,
   navOpenAtom,
   rulesOpenAtom,
@@ -19,6 +20,7 @@ import {
 import { mobileAtom } from '../state/preferences-atoms'
 import { difficultyAtom } from '../state/progress-atoms'
 import { Dropdown } from './Dropdown'
+import { GameInfoPopup } from './GameInfoPopup'
 import { GameNavigation } from './GameNavigation'
 import { GithubIcon } from './GithubIcon'
 import { LanguageButton, LanguageMenu } from './LanguageMenu'
@@ -56,6 +58,11 @@ export function AppBar() {
   const closeAll = () => {
     setNavOpen(false)
     setLangNavOpen(false)
+  }
+  const [gameInfoOpen, setGameInfoOpen] = useAtom(gameInfoOpenAtom)
+  const openGameInfo = () => {
+    closeAll()
+    setGameInfoOpen(true)
   }
   const openRules = () => {
     closeAll()
@@ -99,7 +106,7 @@ export function AppBar() {
             />
           </div>
           <Dropdown open={navOpen} onClose={closeAll}>
-            <CommonMenuEntries />
+            <CommonMenuEntries onGameInfo={openGameInfo} />
           </Dropdown>
         </>
       ) : (
@@ -121,13 +128,19 @@ export function AppBar() {
             />
           </div>
           <Dropdown open={navOpen} onClose={closeAll}>
-            <CommonMenuEntries />
+            <CommonMenuEntries onGameInfo={openGameInfo} />
           </Dropdown>
         </>
       )}
       <Dropdown open={langNavOpen} onClose={closeAll}>
         <LanguageMenu />
       </Dropdown>
+      {'gameId' in route && (
+        <GameInfoPopup
+          open={gameInfoOpen}
+          onClose={() => setGameInfoOpen(false)}
+        />
+      )}
       {route.page === 'game' && (
         <RulesPopup open={rulesOpen} onClose={() => setRulesOpen(false)} />
       )}
@@ -136,10 +149,19 @@ export function AppBar() {
 }
 
 /** The entries of the main menu which exist in both versions */
-function CommonMenuEntries() {
+function CommonMenuEntries({ onGameInfo }: { onGameInfo: () => void }) {
   const { t } = useTranslation()
+  const inGame = 'gameId' in useAtomValue(routeAtom)
   return (
     <>
+      {inGame && (
+        <NavButton
+          icon={faCircleInfo}
+          text={t('appBar.gameInfo')}
+          title={t('appBar.gameInfoTitle')}
+          onClick={onGameInfo}
+        />
+      )}
       <NavButton
         icon={faCircleInfo}
         text={t('appBar.impressum')}
