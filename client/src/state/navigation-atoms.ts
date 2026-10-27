@@ -24,3 +24,9 @@ export const closeLangNavAtom = atom(null, (_get, set) => {
 
 /** The state of the popup with the game rules */
 export const rulesOpenAtom = atom(false)
+
+/**
+ * The last page which is not one of the pages of the menu, e.g. `/g/owner/repo?lang=de`.
+ * The menu's pages lead back to it, or to the landing page if they were opened directly.
+ */
+export const lastPageAtom = atom('/')

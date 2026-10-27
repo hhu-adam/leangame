@@ -10,10 +10,12 @@ import { useTranslation } from 'react-i18next'
 import {
   gameIdAtom,
   gamePath,
+  isMenuPage,
   levelIdAtom,
   routeAtom,
   worldIdAtom,
 } from '../state/location-atoms'
+import { lastPageAtom } from '../state/navigation-atoms'
 import { gameInfoAtom } from '../state/query-atoms'
 import { NavButton } from './NavButton'
 import RotatingGlobe from './RotatingGlobe'
@@ -27,6 +29,7 @@ import RotatingGlobe from './RotatingGlobe'
 export function GameNavigation() {
   const { t } = useTranslation()
   const route = useAtomValue(routeAtom)
+  const lastPage = useAtomValue(lastPageAtom)
   const gameId = useAtomValue(gameIdAtom)
   const worldId = useAtomValue(worldIdAtom)
   const levelId = useAtomValue(levelIdAtom)
@@ -83,6 +86,13 @@ export function GameNavigation() {
           href={gamePath(gameId, worldId, 1)}
         />
       </>
+    )
+  }
+
+  // the pages of the menu lead back to where the player came from
+  if (isMenuPage(route)) {
+    return (
+      <NavButton icon={faArrowLeft} title={t('appBar.back')} href={lastPage} />
     )
   }
 

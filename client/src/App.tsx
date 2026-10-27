@@ -5,6 +5,7 @@ import { NotFound } from './ErrorPage/NotFound'
 import { GamePage } from './GamePage/GamePage'
 import { useCanonicalGamePath } from './hooks/useCanonicalGamePath'
 import { useLanguageInUrl } from './hooks/useLanguageInUrl'
+import { useLastPage } from './hooks/useLastPage'
 import { useTheme } from './hooks/useTheme'
 import { LandingPage } from './LandingPage/LandingPage'
 import { AppBar } from './Navigation/AppBar'
@@ -19,6 +20,7 @@ import { routeAtom } from './state/location-atoms'
 export function App() {
   useLanguageInUrl()
   useCanonicalGamePath()
+  useLastPage()
   useTheme()
   return (
     <>

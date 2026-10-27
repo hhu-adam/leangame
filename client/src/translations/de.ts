@@ -37,6 +37,7 @@ export const de: DeepPartialTranslation<typeof en> = {
     serverLocation: 'Unser Server steht in {{location}}.',
   },
   appBar: {
+    back: 'Zurück',
     backToLanding: 'Zurück zur Spielauswahl',
     backToGame: 'Zurück zur Spielübersicht',
     backToWorld: 'Zurück zur Welt',

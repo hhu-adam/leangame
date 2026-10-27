@@ -100,6 +100,11 @@ export const routeAtom = atom<Route>(get => {
   return { page: 'notFound' }
 })
 
+/** Whether `route` is one of the pages of the menu, e.g. the preferences */
+export function isMenuPage(route: Route) {
+  return PAGES.some(p => p === route.page)
+}
+
 /**
  * The URL path of the game `gameId`, e.g. `g/owner/repo`, or of one of its worlds or
  * levels. Lowercase, as the URL is case-insensitive.
