@@ -112,6 +112,23 @@ export const en = {
         'This server is hosted at Heinrich Heine University Düsseldorf. The lean4game software was developed as part of the project <adamLink>ADAM: Anticipating the Digital Age of Mathematics</adamLink>, funded by the programme <i>Freiraum 2022</i> of the <i>Stiftung Innovation in der Hochschullehre</i>. Ongoing maintenance and development are generously supported by <i>Renaissance Philanthropy</i> through the <i>AI for Math Fund</i>.',
     },
   },
+  progress: {
+    eraseTitle: 'Delete Progress?',
+    eraseQuestion: 'Do you want to delete your saved progress irreversibly?',
+    deleteLevel: 'Delete this Level',
+    deleteWorld: 'Delete this World',
+    deleteAll: 'Delete Everything',
+    deleteAllWarning:
+      "<p>Deleting everything will delete all your proofs and your collected inventory! It's recommended to download your progress first.</p><p>(Saves from other games are not deleted.)</p>",
+    downloadAndDeleteAll: 'Download & Delete everything',
+    cancel: 'Cancel',
+    uploadTitle: 'Upload Saved Progress',
+    uploadDescription:
+      '<p>Select a JSON file with the saved game progress to load your progress.</p><p><strong>Warning:</strong> This will delete your current game progress! Consider <downloadLink>downloading your current progress</downloadLink> first!</p>',
+    selectFile: 'Progress file',
+    invalidFile: 'This is not a valid progress file: {{error}}',
+    load: 'Load selected file',
+  },
   rules: {
     rules: 'Rules',
     gameRules: 'Game Rules',

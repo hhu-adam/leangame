@@ -1,25 +1,29 @@
 import {
   faBars,
   faCircleInfo,
+  faDownload,
+  faEraser,
   faGear,
   faLock,
   faLockOpen,
   faUnlock,
+  faUpload,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
 import { routeAtom } from '../state/location-atoms'
 import {
-  gameInfoOpenAtom,
   langNavOpenAtom,
   navOpenAtom,
-  rulesOpenAtom,
+  popupAtom,
+  type PopupType,
 } from '../state/navigation-atoms'
 import { mobileAtom } from '../state/preferences-atoms'
-import { difficultyAtom } from '../state/progress-atoms'
+import { difficultyAtom, downloadProgressAtom } from '../state/progress-atoms'
 import { Dropdown } from './Dropdown'
+import { ErasePopup } from './ErasePopup'
 import { GameInfoPopup } from './GameInfoPopup'
 import { GameNavigation } from './GameNavigation'
 import { GithubIcon } from './GithubIcon'
@@ -27,6 +31,7 @@ import { LanguageButton, LanguageMenu } from './LanguageMenu'
 import { NavButton } from './NavButton'
 import { PageTitle, WorldTitle } from './PageTitle'
 import { RulesPopup } from './RulesPopup'
+import { UploadPopup } from './UploadPopup'
 
 /** The icon of the game rules button, showing how much the current rules lock */
 function rulesIcon(difficulty: number) {
@@ -41,7 +46,8 @@ export function AppBar() {
   const mobile = useAtomValue(mobileAtom)
   const route = useAtomValue(routeAtom)
   const isLandingPage = route.page === 'landing'
-  const [rulesOpen, setRulesOpen] = useAtom(rulesOpenAtom)
+  const [popup, setPopup] = useAtom(popupAtom)
+  const closePopup = () => setPopup(null)
   const difficulty = useAtomValue(difficultyAtom)
   const [navOpen, setNavOpen] = useAtom(navOpenAtom)
   const [langNavOpen, setLangNavOpen] = useAtom(langNavOpenAtom)
@@ -59,14 +65,9 @@ export function AppBar() {
     setNavOpen(false)
     setLangNavOpen(false)
   }
-  const [gameInfoOpen, setGameInfoOpen] = useAtom(gameInfoOpenAtom)
-  const openGameInfo = () => {
+  const openPopup = (type: PopupType) => {
     closeAll()
-    setGameInfoOpen(true)
-  }
-  const openRules = () => {
-    closeAll()
-    setRulesOpen(true)
+    setPopup(type)
   }
 
   // only on the game overview, where the world tree depends on them
@@ -74,7 +75,7 @@ export function AppBar() {
     <NavButton
       icon={rulesIcon(difficulty)}
       title={t('rules.gameRules')}
-      onClick={openRules}
+      onClick={() => openPopup('rules')}
     />
   )
 
@@ -106,7 +107,7 @@ export function AppBar() {
             />
           </div>
           <Dropdown open={navOpen} onClose={closeAll}>
-            <CommonMenuEntries onGameInfo={openGameInfo} />
+            <CommonMenuEntries onOpenPopup={openPopup} />
           </Dropdown>
         </>
       ) : (
@@ -128,7 +129,7 @@ export function AppBar() {
             />
           </div>
           <Dropdown open={navOpen} onClose={closeAll}>
-            <CommonMenuEntries onGameInfo={openGameInfo} />
+            <CommonMenuEntries onOpenPopup={openPopup} />
           </Dropdown>
         </>
       )}
@@ -136,31 +137,58 @@ export function AppBar() {
         <LanguageMenu />
       </Dropdown>
       {'gameId' in route && (
-        <GameInfoPopup
-          open={gameInfoOpen}
-          onClose={() => setGameInfoOpen(false)}
-        />
+        <>
+          <GameInfoPopup open={popup === 'gameInfo'} onClose={closePopup} />
+          <UploadPopup open={popup === 'upload'} onClose={closePopup} />
+          <ErasePopup open={popup === 'erase'} onClose={closePopup} />
+        </>
       )}
       {route.page === 'game' && (
-        <RulesPopup open={rulesOpen} onClose={() => setRulesOpen(false)} />
+        <RulesPopup open={popup === 'rules'} onClose={closePopup} />
       )}
     </header>
   )
 }
 
 /** The entries of the main menu which exist in both versions */
-function CommonMenuEntries({ onGameInfo }: { onGameInfo: () => void }) {
+function CommonMenuEntries({
+  onOpenPopup,
+}: {
+  onOpenPopup: (type: PopupType) => void
+}) {
   const { t } = useTranslation()
   const inGame = 'gameId' in useAtomValue(routeAtom)
+  const downloadProgress = useSetAtom(downloadProgressAtom)
   return (
     <>
       {inGame && (
-        <NavButton
-          icon={faCircleInfo}
-          text={t('appBar.gameInfo')}
-          title={t('appBar.gameInfoTitle')}
-          onClick={onGameInfo}
-        />
+        <>
+          <NavButton
+            icon={faCircleInfo}
+            text={t('appBar.gameInfo')}
+            title={t('appBar.gameInfoTitle')}
+            onClick={() => onOpenPopup('gameInfo')}
+          />
+          {/* the progress of this game */}
+          <NavButton
+            icon={faDownload}
+            text={t('appBar.download')}
+            title={t('appBar.downloadTitle')}
+            onClick={downloadProgress}
+          />
+          <NavButton
+            icon={faUpload}
+            text={t('appBar.upload')}
+            title={t('appBar.uploadTitle')}
+            onClick={() => onOpenPopup('upload')}
+          />
+          <NavButton
+            icon={faEraser}
+            text={t('appBar.erase')}
+            title={t('appBar.eraseTitle')}
+            onClick={() => onOpenPopup('erase')}
+          />
+        </>
       )}
       <NavButton
         icon={faCircleInfo}

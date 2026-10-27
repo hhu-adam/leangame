@@ -22,11 +22,11 @@ export const closeLangNavAtom = atom(null, (_get, set) => {
   set(langNavOpenAtom, false)
 })
 
-/** The state of the popup with the info about the game */
-export const gameInfoOpenAtom = atom(false)
+/** The popups opened from the app bar */
+export type PopupType = 'gameInfo' | 'rules' | 'upload' | 'erase'
 
-/** The state of the popup with the game rules */
-export const rulesOpenAtom = atom(false)
+/** The open popup, at most one at a time */
+export const popupAtom = atom<PopupType | null>(null)
 
 /**
  * The last page which is not one of the pages of the menu, e.g. `/g/owner/repo?lang=de`.

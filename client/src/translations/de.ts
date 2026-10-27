@@ -115,6 +115,23 @@ export const de: DeepPartialTranslation<typeof en> = {
         'Dieser Spiele-Server wird bereitgestellt vom Zentrum für Informations- und Medientechnologie der Heinrich-Heine-Universität Düsseldorf. Die lean4game-Software wurde im Rahmen des Projekts <adamLink>ADAM: Anticipating the Digital Age of Mathematics</adamLink> entwickelt, finanziert durch das Programm <i>Freiraum 2022</i> der <i>Stiftung Innovation in der Hochschullehre</i>. Der laufende Betrieb des Servers und die Weiterentwicklung der Software werden durch Mittel des <i>AI for Math Fund</i> der Stiftung <i>Renaissance Philanthropy</i> ermöglicht.',
     },
   },
+  progress: {
+    eraseTitle: 'Spielstand löschen?',
+    eraseQuestion: 'Soll der Spielstand unwiderruflich gelöscht werden?',
+    deleteLevel: 'Dieses Level löschen',
+    deleteWorld: 'Diese Welt löschen',
+    deleteAll: 'Alles löschen',
+    deleteAllWarning:
+      '<p>Alles zu löschen löscht sämtliche Beweise und das gesammelte Inventar! Es wird empfohlen, den Spielstand zuerst herunterzuladen.</p><p>(Spielstände anderer Spiele werden nicht gelöscht.)</p>',
+    downloadAndDeleteAll: 'Herunterladen & alles löschen',
+    cancel: 'Abbrechen',
+    uploadTitle: 'Spielstand hochladen',
+    uploadDescription:
+      '<p>Wähle eine JSON-Datei mit einem Spielstand, um diesen zu laden.</p><p><strong>Achtung:</strong> Der aktuelle Spielstand wird dabei überschrieben! Wenn du noch einmal zum aktuellen Spielstand zurückkehren möchtest, solltest du zunächst den <downloadLink>aktuellen Spielstand herunterladen</downloadLink>!</p>',
+    selectFile: 'Spielstand-Datei',
+    invalidFile: 'Dies ist keine gültige Spielstand-Datei: {{error}}',
+    load: 'Ausgewählte Datei hochladen',
+  },
   rules: {
     rules: 'Regeln',
     gameRules: 'Spielregeln',

@@ -1,7 +1,9 @@
 import { atom } from 'jotai'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 
+import { downloadFile } from '../utils/download'
 import { gameIdAtom, levelIdAtom, worldIdAtom } from './location-atoms'
+import { migrateStoredProgress } from './progress-migration'
 import {
   type GameProgress,
   type LevelProgress,
@@ -36,14 +38,19 @@ const defaultGameProgress: GameProgress = {
   difficulty: DEFAULT_DIFFICULTY,
 }
 
+const PROGRESS_KEY = 'game_progress'
+
 const storage = createJSONStorage<Progress>(() => localStorage)
+
+// before the progress is read below
+migrateStoredProgress(PROGRESS_KEY)
 
 /**
  * This handles all progress for all games.
  * Therefore this must not be exported so that no game can interfer with any other game.
  */
 const allProgressAtom = atomWithStorage<Progress>(
-  'game_progress',
+  PROGRESS_KEY,
   defaultProgress,
   storage,
   { getOnInit: true },
@@ -152,3 +159,18 @@ export const completedAtom = atom(
     set(levelProgressAtom, { ...levelProgress, completed: val })
   },
 )
+
+/** Lets the player save the progress of the current game as a JSON file */
+export const downloadProgressAtom = atom(null, get => {
+  const gameId = get(gameIdAtom)
+  const progress = get(progressAtom)
+  if (!gameId || !progress) return
+  // e.g. `lean4game-owner-repo-2026-10-27.json`
+  const game = gameId.replace(/^g\//, '').replace('/', '-')
+  const date = new Date().toISOString().slice(0, 10)
+  downloadFile(
+    JSON.stringify(progress, null, 2),
+    `lean4game-${game}-${date}.json`,
+    'application/json',
+  )
+})
