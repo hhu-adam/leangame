@@ -21,3 +21,6 @@ export const openLangNavAtom = atom(null, (_get, set) => {
 export const closeLangNavAtom = atom(null, (_get, set) => {
   set(langNavOpenAtom, false)
 })
+
+/** The state of the popup with the game rules */
+export const rulesOpenAtom = atom(false)

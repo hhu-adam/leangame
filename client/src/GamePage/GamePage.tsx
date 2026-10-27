@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next'
 
 import { PanelLayout } from '../components/PanelLayout'
+import { WorldTree } from './WorldTree'
 
-/** The overview of a game at `/owner/repo`. TODO: the panels are still empty */
+/** The overview of a game at `/g/owner/repo`, with its world tree. TODO: the side panels are still empty */
 export function GamePage() {
   const { t } = useTranslation()
   return (
@@ -10,7 +11,7 @@ export function GamePage() {
       leftTitle={t('game.introduction')}
       rightTitle={t('game.inventory')}
       left={null}
-      center={null}
+      center={<WorldTree />}
       right={null}
     />
   )

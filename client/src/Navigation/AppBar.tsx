@@ -2,26 +2,45 @@ import {
   faBars,
   faCircleInfo,
   faGear,
+  faLock,
+  faLockOpen,
+  faUnlock,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAtom, useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
 import { routeAtom } from '../state/location-atoms'
-import { langNavOpenAtom, navOpenAtom } from '../state/navigation-atoms'
+import {
+  langNavOpenAtom,
+  navOpenAtom,
+  rulesOpenAtom,
+} from '../state/navigation-atoms'
 import { mobileAtom } from '../state/preferences-atoms'
+import { difficultyAtom } from '../state/progress-atoms'
 import { Dropdown } from './Dropdown'
 import { GameNavigation } from './GameNavigation'
 import { GithubIcon } from './GithubIcon'
 import { LanguageButton, LanguageMenu } from './LanguageMenu'
 import { NavButton } from './NavButton'
 import { PageTitle, WorldTitle } from './PageTitle'
+import { RulesPopup } from './RulesPopup'
+
+/** The icon of the game rules button, showing how much the current rules lock */
+function rulesIcon(difficulty: number) {
+  if (difficulty <= 0) return faLockOpen
+  if (difficulty === 1) return faUnlock
+  return faLock
+}
 
 /** The navigation bar at the top of every page */
 export function AppBar() {
   const { t } = useTranslation()
   const mobile = useAtomValue(mobileAtom)
-  const isLandingPage = useAtomValue(routeAtom).page === 'landing'
+  const route = useAtomValue(routeAtom)
+  const isLandingPage = route.page === 'landing'
+  const [rulesOpen, setRulesOpen] = useAtom(rulesOpenAtom)
+  const difficulty = useAtomValue(difficultyAtom)
   const [navOpen, setNavOpen] = useAtom(navOpenAtom)
   const [langNavOpen, setLangNavOpen] = useAtom(langNavOpenAtom)
 
@@ -38,6 +57,19 @@ export function AppBar() {
     setNavOpen(false)
     setLangNavOpen(false)
   }
+  const openRules = () => {
+    closeAll()
+    setRulesOpen(true)
+  }
+
+  // only on the game overview, where the world tree depends on them
+  const rulesButton = route.page === 'game' && (
+    <NavButton
+      icon={rulesIcon(difficulty)}
+      title={t('rules.gameRules')}
+      onClick={openRules}
+    />
+  )
 
   const githubButton = (
     <NavButton
@@ -58,6 +90,7 @@ export function AppBar() {
           <PageTitle />
           <div className="flex flex-1 basis-0 items-center justify-end">
             {isLandingPage && githubButton}
+            {rulesButton}
             <LanguageButton open={langNavOpen} onToggle={toggleLangNav} />
             <NavButton
               icon={navOpen ? faXmark : faBars}
@@ -79,6 +112,7 @@ export function AppBar() {
           <PageTitle />
           <div className="flex flex-1 basis-0 items-center justify-end">
             {isLandingPage && githubButton}
+            {rulesButton}
             <LanguageButton open={langNavOpen} onToggle={toggleLangNav} />
             <NavButton
               icon={navOpen ? faXmark : faBars}
@@ -94,6 +128,9 @@ export function AppBar() {
       <Dropdown open={langNavOpen} onClose={closeAll}>
         <LanguageMenu />
       </Dropdown>
+      {route.page === 'game' && (
+        <RulesPopup open={rulesOpen} onClose={() => setRulesOpen(false)} />
+      )}
     </header>
   )
 }

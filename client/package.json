@@ -17,6 +17,8 @@
     "@mui/material": "^9.5.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/query-core": "^5.104.5",
+    "cytoscape": "^3.34.3",
+    "cytoscape-klay": "^3.1.4",
     "i18next": "^26.4.0",
     "i18next-http-backend": "^4.0.1",
     "jotai": "^2.20.3",

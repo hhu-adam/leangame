@@ -87,6 +87,22 @@ export const de: DeepPartialTranslation<typeof en> = {
   game: {
     introduction: 'Einführung',
     inventory: 'Inventar',
+    worlds: 'Welten',
+  },
+  popup: {
+    close: 'Schließen',
+  },
+  rules: {
+    rules: 'Regeln',
+    gameRules: 'Spielregeln',
+    levels: 'Level',
+    tactics: 'Taktiken',
+    locked: 'gesperrt',
+    unlocked: 'freigeschaltet',
+    none: 'keine',
+    relaxed: 'relaxed',
+    regular: 'regulär',
+    help: '<p>Die Spielregeln bestimmen, ob es erlaubt ist, Levels zu überspringen und ob das Spiel überprüft, welche Taktiken und Sätze freigeschaltet sind und nur diese im Beweis akzeptiert.</p><p>Bemerkung: "Freigeschaltete" Taktiken (und Sätze) werden durch zwei Faktoren bestimmt: Die Menge der Taktiken, die minimal notwendig sind, um das Level zu lösen, und dazu die Menge aller Taktiken, die in einem anderen Level freigeschaltet wurden. Das bedeutet, wenn <code>simp</code> in einem Level freigeschaltet wird, kann diese Taktik danach in jeglichen Levels verwendet werden.</p>',
   },
   landing: {
     title: 'Lean-Lern-Spiel-Server',

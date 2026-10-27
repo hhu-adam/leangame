@@ -84,6 +84,22 @@ export const en = {
   game: {
     introduction: 'Introduction',
     inventory: 'Inventory',
+    worlds: 'Worlds',
+  },
+  popup: {
+    close: 'Close',
+  },
+  rules: {
+    rules: 'Rules',
+    gameRules: 'Game Rules',
+    levels: 'levels',
+    tactics: 'tactics',
+    locked: 'locked',
+    unlocked: 'unlocked',
+    none: 'none',
+    relaxed: 'relaxed',
+    regular: 'regular',
+    help: '<p>Game rules determine if it is allowed to skip levels and if the games runs checks to only allow unlocked tactics and theorems in proofs.</p><p>Note: "Unlocked" tactics (or theorems) are determined by two things: The set of minimal tactics needed to solve a level, plus any tactics you unlocked in another level. That means if you unlock <code>simp</code> in a level, you can use it henceforth in any level.</p>',
   },
   landing: {
     title: 'Lean Game Server',

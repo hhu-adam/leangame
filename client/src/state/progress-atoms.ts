@@ -7,10 +7,8 @@ import {
   type LevelProgress,
   type Progress,
   type WorldProgress,
-  type Selection,
   DEFAULT_DIFFICULTY,
 } from './progress-types'
-import { levelProgressAtomFamily } from './world-tree-atoms'
 
 /**
  * The player's progress is stored in local storage under `game_progress`.
