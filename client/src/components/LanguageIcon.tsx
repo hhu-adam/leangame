@@ -20,17 +20,20 @@ export function LanguageIcon({
   title ??= language?.name ?? iso
   if (useFlags && flag)
     return (
-      <ReactCountryFlag
-        countryCode={flag}
-        svg
+      <span
+        className={twMerge(
+          'inline-flex h-4 w-6 items-center justify-center',
+          className,
+        )}
         title={title}
-        className={twMerge('min-w-6', className)}
-      />
+      >
+        <ReactCountryFlag countryCode={flag} svg />
+      </span>
     )
   return (
     <span
       className={twMerge(
-        'inline-block w-6 text-center leading-none lowercase',
+        'inline-block w-6 text-center leading-none lowercase text-sm',
         className,
       )}
       title={title}
